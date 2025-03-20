@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Control</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body class="hidden-content">
+
+    <!-- Contenedor para el video de carga -->
+    <div id="video-overlay">
+        <video autoplay muted playsinline id="loading-video">
+            <source src="/static/videos/Intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Contenido de la página -->
+    <div id="container">
+        <aside id="sidebar">
+            <div id="search-container">
+                <input type="text" placeholder="Search" id="search-bar">
+                <i class="fas fa-search search-icon" style="color: #c4c7c5;"></i>
+            </div>
+            <div id="menu">
+                <button>Local Data</button>
+                <button>Map Layers</button>
+                <button>Leaderboard</button>
+                <button>Help</button>
+                <button onclick="showIntroductionBox()">Introduction</button>
+                <button onclick="showAboutBox()">About the Creator</button>
+            </div>
+            <div id="info">Monitor your eco-actions, earn rewards, and help the planet.</div>
+        </aside>
+
+        <main>
+            <div id="top-menu">
+                <img src="{{ url_for('static', filename='images/Pford_2.jpg') }}" alt="Carbon Control Logo"
+                    class="logo">
+                <button>Home</button>
+                <button>Report Actions</button>
+                <button>Redeem Credits</button>
+                <button id="toggle-live-data">Global CO₂ Evolution</button>
+
+                <!-- Pford Credits Button with Clickable Pop-up -->
+                <div id="pford-credits-container">
+                    <button id="pford-credits-button">Pford Credits</button>
+                    <!-- Pop-up Box (Initially Hidden) -->
+                    <div id="pford-credits-box" class="pford-popup">
+                        <div class="popup-header">
+                            <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
+                            <span class="popup-title">Pford Credits</span>
+                        </div>
+                        <div class="popup-divider"></div>
+                        <p class="popup-text">
+                            Pford Credits are rewards you can earn by taking eco-friendly actions. These credits can be
+                            redeemed
+                            for benefits such as free public transport, discounts, and environmental incentives.
+                            Join the movement and start earning today!
+                        </p>
+                        <div class="popup-divider"></div>
+                        <button class="signup-button">Sign Up</button>
+
+                        <!-- New Login Section -->
+                        <p class="login-text-small">Already have an account?</p>
+                        <p class="login-link"><a href="#" onclick="showLogin()">Log in</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="introduction-box" class="introduction-popup hidden">
+                <div class="introduction-header">
+                    <span class="intro-title">Welcome to Carbon Control</span>
+                    <button class="close-button" onclick="closeIntroductionBox()">&times;</button>
+                </div>
+                <div class="divider"></div>
+                <p class="introduction-text">
+                    This platform is designed to monitor climate impact, encourage eco-friendly actions, and reward
+                    sustainability efforts.
+
+                    Instead of just telling you, let us show you! Watch this video to learn more about how Carbon
+                    Control works and how you can be part of the change.
+                </p>
+                <div class="divider"></div>
+
+                <div class="content-container">
+                    <img src="/static/images/Pford.png" alt="Introduction" class="intro-photo">
+                    <div class="video-container">
+                        <video controls>
+                            <source src="/static/videos/Carbon Control.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About the Creator Pop-up Box (Initially Hidden) -->
+            <div id="about-box" class="about-popup hidden">
+                <div class="about-header">
+                    <img src="/static/images/IMG_3307.jpg" alt="Jorge" class="about-photo">
+                    <span class="about-title">About the Creator</span>
+                    <button class="close-button" onclick="closeAboutBox()">&times;</button>
+                </div>
+                <div class="divider"></div>
+                <p class="about-text">
+                    Hi, I'm Jorge, a first-year Aeronautical Engineering student with a deep passion
+                    for sustainability, technology, and innovation. Beyond my studies, I enjoy learning new languages,
+                    practicing athletics, and exploring ways to make a meaningful impact on the world.
+
+                    Carbon Control was born from my desire to merge environmental responsibility with modern technology.
+                    By creating Pford Credits, I aim to encourage and reward eco-friendly actions, making sustainability
+                    both accessible and rewarding. Join the movement and help shape a greener future with us!
+                </p>
+                <div class="divider"></div>
+                <!-- Botón de Contacto -->
+                <a href="mailto:jorgecf29@hotmail.com?subject=Collaboration Request&body=Hi Jorge, I'd like to collaborate with you!"
+                    class="contact-button">
+                    Contact Me
+                </a>
+            </div>
+
+            <section id="container-2">
+                <h3>Global Greenhouse Gas Emissions from 1958 - 2024</h3>
+            </section>
+
+            <section id="container-3">
+                <div id="carbon-globe-container" style="display: none;">
+                    <iframe id="carbon-globe" width="100%" height="400px" frameborder="0"></iframe>
+                </div>
+            </section>
+
+            <section id="year-selection">
+                <label for="year-select">Select year to visualize CO2 concentrations in the world</label>
+                <select id="year-select">
+                    <option value="">Select a year</option>
+                    <script>
+                        for (let year = 1958; year <= 2024; year++) {
+                            document.write(`<option value="${year}">${year}</option>`);
+                        }
+                    </script>
+                </select>
+            </section>
+
+            <!-- Sign-Up Pop-up Box (Initially Hidden) -->
+            <div id="signup-box" class="disclaimer-box hidden">
+                <div class="disclaimer-header">
+                    <img src="/static/images/Pford_2.jpg" alt="Pford Logo" class="business-logo">
+                    <span class="business-name">Welcome to Pford Credits</span>
+                    <button class="close-button" onclick="closeSignupBox()">&times;</button>
+                </div>
+                <div class="divider"></div>
+                <p class="disclaimer-text">
+                    Hey! Pford Credits is here to reward your eco-friendly actions. Right now, it's only available for
+                    students at the Universidad Aeronáutica en Querétaro, but we're growing fast. Soon, it’ll be in
+                    Querétaro and beyond—why not get ahead and start earning today?
+                </p>
+                <div class="divider"></div>
+                <div class="input-container">
+                    <label for="institutional-email">Institutional Email</label>
+                    <input type="email" id="institutional-email" placeholder="example@soyunaq.mx">
+                </div>
+
+                <div class="input-container">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Enter your password">
+                        <i class="fas fa-eye" id="toggle-password"
+                            onclick="togglePassword('password', 'toggle-password')"></i>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm-password" placeholder="Confirm your password">
+                        <i class="fas fa-eye" id="toggle-confirm-password"
+                            onclick="togglePassword('confirm-password', 'toggle-confirm-password')"></i>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+                <button class="accept-button" onclick="submitSignup()">Sign Up</button>
+
+                <!-- New Login Section -->
+                <p class="login-text">Already have an account?</p>
+                <p class="login-link"><a href="#" onclick="showLogin()">Log in</a></p>
+            </div>
+
+            <!-- Log In Pop-up Box (Initially Hidden) -->
+            <div id="login-box" class="disclaimer-box hidden">
+                <div class="disclaimer-header">
+                    <img src="/static/images/Pford_2.jpg" alt="Pford Logo" class="business-logo">
+                    <span class="business-name">Welcome Back to Pford Credits</span>
+                    <button class="close-button" onclick="closeLoginBox()">&times;</button>
+                </div>
+                <div class="divider"></div>
+                <p class="disclaimer-text">
+                    Log in to your Pford Credits account to track your rewards and redeem them for benefits.
+                </p>
+                <div class="divider"></div>
+                <div class="input-container">
+                    <label for="login-email">Institutional Email</label>
+                    <input type="email" id="login-email" placeholder="example@soyunaq.mx">
+                </div>
+
+                <div class="input-container">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="Enter your password">
+                        <i class="fas fa-eye" id="toggle-login-password"
+                            onclick="togglePassword('login-password', 'toggle-login-password')"></i>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+                <button class="accept-button" onclick="submitLogin()">Log In</button>
+
+                <!-- New Sign Up Section -->
+                <p class="login-text">Don't have an account?</p>
+                <p class="signup-link"><a href="#" onclick="showSignup()">Create one</a></p>
+            </div>
+
+            <header id="header">
+                <div id="location-info">
+                    <p>Camera: 35 km | Lat: <span id="lat">20.5831</span> | Lon: <span id="lon">-100.4267</span></p>
+                </div>
+            </header>
+
+            <section id="info-above-map">
+                <h3>Your Local Climate Impact</h3>
+                <p>See How Climate Change is Affecting Your Region</p>
+            </section>
+
+            <section id="map-container">
+                <div id="map"></div>
+            </section>
+
+            <section id="info-below-map">
+                <div id="container-info-below-map">
+                    <img src="/static/images/Pford.png" alt="Pford character explaining climate data"
+                        class="pford-image" />
+                    <div class="pford-info">
+                        <p id="pford-message">
+                            Hello! I’m Pford, your virtual assistant. I’m here to help you with information about air
+                            quality in Querétaro and everything related to climate change. You can ask me anything,
+                            whether it’s about pollution levels, tips for improving the environment, or data on how
+                            climate change affects us all. Feel free to ask, and let’s take care of our planet together!
+                            Please note that this chatbot currently only has a database with information about the state
+                            of Querétaro and some general data from NASA. If you would like to contribute additional
+                            data from your locality, you can do so by clicking on
+                            <a href="http://127.0.0.1:5000/" target="_blank"
+                                style="color: #c2e7ff; text-decoration: underline;">this link</a>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div id="pford-chat-container">
+                <input type="text" placeholder="Ask Pford..." id="pford-chat-input">
+                <button id="pford-chat-button">
+                    <i class="fas fa-paper-plane"></i> <!-- Paper airplane icon -->
+                </button>
+            </div>
+
+            <div class="pford-info" id="chatOutput"></div>
+
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="/static/script.js"></script>
+    <script src="CarbonGlobe/script.js"></script>
+
+    <!-- Script for Pford Credits Hover Effect -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const creditsButton = document.getElementById("pford-credits-button");
+            const popup = document.getElementById("pford-credits-box");
+
+            // Toggle pop-up visibility on button click
+            creditsButton.addEventListener("click", () => {
+                popup.style.display = (popup.style.display === "block") ? "none" : "block";
+            });
+
+            // Close pop-up if clicking outside
+            document.addEventListener("click", (event) => {
+                if (!creditsButton.contains(event.target) && !popup.contains(event.target)) {
+                    popup.style.display = "none";
+                }
+            });
+        });
+
+        // Hide loading video after it ends
+        document.getElementById('loading-video').addEventListener('ended', function () {
+            const videoOverlay = document.getElementById('video-overlay');
+            videoOverlay.style.opacity = '0';
+            setTimeout(function () {
+                videoOverlay.style.display = 'none';
+                document.body.classList.remove('hidden-content');
+            }, 1000);
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Asegura que los popups estén ocultos al inicio
+            document.getElementById("signup-box").classList.add("hidden");
+            document.getElementById("login-box").classList.add("hidden");
+
+            // Enlazar eventos de Log in y Sign up
+            document.querySelectorAll('.login-link a').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault(); // Previene comportamiento por defecto de los enlaces
+                    showLogin();
+                });
+            });
+
+            // Enlazar eventos de Log in y Sign up
+            document.querySelectorAll('.signup-link a').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault(); // Previene comportamiento por defecto de los enlaces
+                    showSignUp();
+                });
+            });
+
+            document.querySelectorAll('.signup-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    showSignup();
+                });
+            });
+        });
+
+        function submitSignup() {
+            const email = document.getElementById("institutional-email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            if (!email || !password || !confirmPassword) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email, password: password, full_name: "" }) // Sending empty full_name
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+
+    <script>
+        function closeSignupBox() {
+            document.getElementById("signup-box").classList.add("hidden");
+        }
+    </script>
+
+    <style>
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            flex: 1;
+            padding-right: 30px;
+        }
+
+        .password-wrapper i {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #888;
+        }
+    </style>
+
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+
+    <script>
+        function showLogin() {
+            document.getElementById("signup-box").classList.add("hidden"); // Oculta Sign Up
+            document.getElementById("login-box").classList.remove("hidden"); // Muestra Log In
+        }
+
+        function showSignup() {
+            document.getElementById("login-box").classList.add("hidden"); // Oculta Log In
+            document.getElementById("signup-box").classList.remove("hidden"); // Muestra Sign Up
+        }
+
+        function closeLoginBox() {
+            document.getElementById("login-box").classList.add("hidden");
+        }
+
+        function submitLogin() {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            if (!email || !password) {
+                alert("Please enter your email and password.");
+                return;
+            }
+
+            alert("Log In Successful!");
+        }
+    </script>
+
+    <script>
+        function showAboutBox() {
+            document.getElementById("about-box").classList.remove("hidden");
+        }
+
+        function closeAboutBox() {
+            document.getElementById("about-box").classList.add("hidden");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("#menu button:nth-child(6)").addEventListener("click", function () {
+                showAboutBox();
+            });
+        });
+    </script>
+
+    <script>
+        function showIntroductionBox() {
+            document.getElementById("introduction-box").classList.remove("hidden");
+        }
+
+        function closeIntroductionBox() {
+            document.getElementById("introduction-box").classList.add("hidden");
+        }
+    </script>
+
+    <style>
+        .introduction-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(128, 0, 128, 0.5);
+            color: white;
+            z-index: 10000;
+            text-align: center;
+        }
+
+        .introduction-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el título */
+        }
+
+        .intro-title {
+            font-size: 38px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            display: block;
+            width: 100%;
+        }
+
+        .divider {
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Nueva clase para organizar la imagen y el video */
+        .content-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            /* Espacio entre imagen y video */
+        }
+
+        .intro-photo {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: flex-end;
+            /* Alinea el video a la derecha */
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .video-container video {
+            width: 100%;
+            max-width: 650px;
+            border-radius: 10px;
+        }
+    </style>
+
+    <script>
+        document.getElementById("toggle-live-data").addEventListener("click", function () {
+            var container = document.getElementById("carbon-globe-container");
+            var iframe = document.getElementById("carbon-globe");
+
+            if (container.style.display === "none") {
+                container.style.display = "block";
+                iframe.src = "{{ url_for('static', filename='CarbonGlobe/CarbonGlobe.html') }}";
+
+                // Ajustar el tamaño del iframe después de cargar
+                setTimeout(() => {
+                    iframe.style.width = "100%";
+                    iframe.style.height = "300px"; // Ajusta según la altura del contenedor
+                }, 500); // Espera medio segundo para asegurar la carga correcta
+            } else {
+                container.style.display = "none";
+                iframe.src = ""; // Detener la animación para liberar memoria
+            }
+        });
+    </script>
+
+</body>
+
+</html>
