@@ -11,7 +11,6 @@ body {
     display: flex;
     background: linear-gradient(to right, rgb(44, 44, 44), rgb(57, 1, 57));
     overflow-x: hidden;
-    /* Evita desplazamiento horizontal */
 }
 
 #video-overlay {
@@ -594,7 +593,6 @@ main {
     color: white;
 }
 
-/* Login text styling */
 .login-text,
 .login-text-small {
     text-align: center;
@@ -696,7 +694,6 @@ main {
     font-size: 26px;
     cursor: pointer;
     color: white;
-    /* Blanco */
     transition: color 0.3s ease-in-out;
 }
 
@@ -708,8 +705,7 @@ main {
     display: inline-block;
     margin-top: 15px;
     padding: 12px 20px;
-    background-color: #800080;
-    /* Morado */
+    background-color: purple;
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -721,6 +717,164 @@ main {
 
 .contact-button:hover {
     background-color: #a020f0;
-    /* Morado más claro */
     transform: scale(1.05);
+}
+
+/* Añade esto al final de styles.css */
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-collapsed {
+    transform: translateX(-300px);
+    width: 0 !important;
+}
+
+.main-expanded {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+#sidebar {
+    transition: all 0.3s ease;
+    will-change: transform;
+}
+
+#top-menu {
+    transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+    color: purple;
+    transform: scale(1.1);
+}
+
+#sidebar.sidebar-collapsed+main #top-menu {
+    left: 0;
+    width: 100%;
+}
+
+/* Añade esto a tu styles.css */
+#user-menu {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+#logout-btn {
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#logout-btn:hover {
+    background-color: #ff6b81;
+}
+
+.user-credits {
+    color: #00b894;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+/* Agrega esto al final de styles.css */
+.sidebar-collapsed {
+    transform: translateX(-300px);
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+/* Agrega al final del archivo */
+#redeem-popup {
+    width: 350px;
+}
+
+#redeem-popup .input-container {
+    margin: 15px 0;
+}
+
+#redeem-popup .input-container input[type="file"] {
+    color: white;
+    padding: 8px 0;
+}
+
+.fa-check-circle {
+    animation: fadeIn 0.5s, bounce 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-20px);
+    }
+
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Estilos para el popup de reportar acciones */
+
+#report-popup .input-container {
+    margin: 15px 0;
+}
+
+#report-popup .input-container input[type="file"] {
+    color: white;
+    padding: 8px 0;
+}
+
+/* Añade esto a tu styles.css */
+#report-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 90%;
+    z-index: 10000;
+    display: none;
+    /* Se controla con la clase hidden */
+}
+
+#report-popup.hidden {
+    display: none;
+}
+
+#report-popup:not(.hidden) {
+    display: block;
+}
+
+#report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
