@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Acciones Ecológicas</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .actions-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .action-card {
+            background: #1b1b1c;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .action-details {
+            flex: 1;
+        }
+
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .action-user {
+            font-weight: bold;
+            color: #9333ea;
+        }
+
+        .action-date {
+            color: #888;
+        }
+
+        .action-description {
+            margin: 10px 0;
+        }
+
+        .action-credits {
+            color: #00b894;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="top-menu">
+        <img src="/static/images/Pford_2.jpg" alt="Logo" class="logo">
+        <h1>Acciones Ecológicas Registradas</h1>
+    </div>
+
+    <div class="actions-container">
+        {% for action in actions %}
+        <div class="action-card">
+            <img src="/static/uploads/{{ action.image_path }}" alt="Evidencia" class="action-image">
+            <div class="action-details">
+                <div class="action-header">
+                    <span class="action-user">{{ action.user_email }}</span>
+                    <span class="action-date">{{ action.created_at }}</span>
+                </div>
+                <p class="action-description">{{ action.description }}</p>
+                <p class="action-credits">Créditos actuales: {{ action.credits }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
