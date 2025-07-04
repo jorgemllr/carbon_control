@@ -23,7 +23,7 @@
 
     <!-- Contenido de la página -->
     <div id="container">
-        <aside id="sidebar">
+        <aside id="sidebar" class="sidebar-collapsed"> <!-- Agrega class="sidebar-collapsed" aquí -->
             <div id="search-container">
                 <input type="text" placeholder="Search" id="search-bar">
                 <i class="fas fa-search search-icon" style="color: #c4c7c5;"></i>
@@ -39,18 +39,91 @@
             <div id="info">Monitor your eco-actions, earn rewards, and help the planet.</div>
         </aside>
 
-        <main>
+        <main class="main-expanded"> <!-- Agrega class="main-expanded" aquí -->
             <div id="top-menu">
+                <button id="sidebar-toggle" class="toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <img src="{{ url_for('static', filename='images/Pford_2.jpg') }}" alt="Carbon Control Logo"
                     class="logo">
+
+                <!-- Pop-up con créditos del usuario (correo y puntos) -->
+                <div id="user-credit-popup" class="pford-popup hidden">
+                    <div class="popup-header">
+                        <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
+                        <span class="popup-title">Tus Créditos</span>
+                    </div>
+                    <div class="popup-divider"></div>
+                    <p id="popup-user-email" class="popup-text"></p>
+                    <p id="popup-user-credits" class="popup-text"></p>
+                </div>
+
+                <!-- Agrega este popup justo después del popup de user-credit-popup: -->
+                <div id="redeem-popup" class="pford-popup hidden">
+                    <div class="popup-header">
+                        <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
+                        <span class="popup-title">Canjear Acciones Ecológicas</span>
+                        <button class="close-button" onclick="closeRedeemPopup()">&times;</button>
+                    </div>
+                    <div class="popup-divider"></div>
+                    <p class="popup-text">
+                        Sube evidencia de tu acción ecológica para canjear tus créditos.
+                        Asegúrate que la imagen sea clara y muestre tu contribución ambiental.
+                    </p>
+                    <div class="input-container">
+                        <label for="action-description">Descripción breve:</label>
+                        <input type="text" id="action-description" placeholder="Ej: Planté 5 árboles en el parque">
+                    </div>
+                    <div class="input-container">
+                        <label for="action-image">Subir imagen:</label>
+                        <input type="file" id="action-image" accept="image/*">
+                    </div>
+                    <div class="popup-divider"></div>
+                    <button class="accept-button" onclick="submitRedeemAction()">Enviar Evidencia</button>
+                    <div id="redeem-success" style="display: none; text-align: center; margin-top: 15px;">
+                        <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 50px;"></i>
+                        <p style="color: white; margin-top: 10px;">¡Evidencia enviada con éxito!</p>
+                    </div>
+                </div>
+
+                <!-- Popup para Report Actions -->
+                <div id="report-popup" class="pford-popup hidden">
+                    <div class="popup-header">
+                        <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
+                        <span class="popup-title">Reportar Acción Ecológica</span>
+                        <button class="close-button" onclick="closeReportPopup()">&times;</button>
+                    </div>
+                    <div class="popup-divider"></div>
+                    <p class="popup-text">
+                        Reporta una acción ecológica que hayas realizado para validación.
+                        Debes estar logeado para reportar acciones.
+                    </p>
+                    <div id="report-login-message"
+                        style="text-align: center; color: #ff4757; margin: 15px 0; display: none;">
+                        Debes iniciar sesión para reportar acciones
+                    </div>
+                    <div id="report-form" style="display: none;">
+                        <div class="input-container">
+                            <label for="report-description">Descripción:</label>
+                            <input type="text" id="report-description" placeholder="Ej: Recogí 5 kg de basura">
+                        </div>
+                        <div class="input-container">
+                            <label for="report-image">Evidencia (imagen):</label>
+                            <input type="file" id="report-image" accept="image/*">
+                        </div>
+                        <div class="popup-divider"></div>
+                        <button class="accept-button" onclick="submitReportAction()">Enviar Reporte</button>
+                    </div>
+                </div>
+
                 <button>Home</button>
-                <button>Report Actions</button>
-                <button>Redeem Credits</button>
+                <button id="report-actions-btn">Report Actions</button>
+                <button id="redeem-actions-btn">Redeem Actions</button>
                 <button id="toggle-live-data">Global CO₂ Evolution</button>
 
                 <!-- Pford Credits Button with Clickable Pop-up -->
                 <div id="pford-credits-container">
-                    <button id="pford-credits-button">Pford Credits</button>
+                    <button id="pford-credits-button">Sign up</button>
                     <!-- Pop-up Box (Initially Hidden) -->
                     <div id="pford-credits-box" class="pford-popup">
                         <div class="popup-header">
@@ -71,6 +144,10 @@
                         <p class="login-text-small">Already have an account?</p>
                         <p class="login-link"><a href="#" onclick="showLogin()">Log in</a></p>
                     </div>
+                </div>
+                <div id="user-menu" style="display: none;">
+                    <span id="user-email-display" style="color: white; margin-right: 15px;"></span>
+                    <button id="logout-btn" style="background-color: #ff4757;">Cerrar sesión</button>
                 </div>
             </div>
 
@@ -125,6 +202,20 @@
                 </a>
             </div>
 
+            <!-- Y PEGA JUSTO DESPUÉS este código: -->
+            <div id="auth-success-popup" class="introduction-popup hidden">
+                <div class="introduction-header">
+                    <span class="intro-title">¡Bienvenido a Pford Credits!</span>
+                    <button class="close-button" onclick="closeAuthPopup()">&times;</button>
+                </div>
+                <div class="divider"></div>
+                <p class="introduction-text" id="auth-message">
+                    <!-- El mensaje se llenará dinámicamente -->
+                </p>
+                <div class="divider"></div>
+                <button class="accept-button" onclick="closeAuthPopup()">Continuar</button>
+            </div>
+
             <section id="container-2">
                 <h3>Global Greenhouse Gas Emissions from 1958 - 2024</h3>
             </section>
@@ -157,7 +248,7 @@
                 <div class="divider"></div>
                 <p class="disclaimer-text">
                     Hey! Pford Credits is here to reward your eco-friendly actions. Right now, it's only available for
-                    students at the Universidad Aeronáutica en Querétaro, but we're growing fast. Soon, it’ll be in
+                    students at the Universidad Aeronáutica en Querétaro, but we're growing fast. Soon, it'll be in
                     Querétaro and beyond—why not get ahead and start earning today?
                 </p>
                 <div class="divider"></div>
@@ -247,15 +338,15 @@
                         class="pford-image" />
                     <div class="pford-info">
                         <p id="pford-message">
-                            Hello! I’m Pford, your virtual assistant. I’m here to help you with information about air
-                            quality in Querétaro and everything related to climate change. You can ask me anything,
-                            whether it’s about pollution levels, tips for improving the environment, or data on how
-                            climate change affects us all. Feel free to ask, and let’s take care of our planet together!
-                            Please note that this chatbot currently only has a database with information about the state
-                            of Querétaro and some general data from NASA. If you would like to contribute additional
-                            data from your locality, you can do so by clicking on
-                            <a href="http://127.0.0.1:5000/" target="_blank"
-                                style="color: #c2e7ff; text-decoration: underline;">this link</a>.
+                            ¡Hola comunidad UNAQ! Mi nombre es Pford, y soy un asistente virtual diseñado para brindar
+                            información sobre el medio ambiente en el estado de Querétaro. Pueden preguntarme cualquier
+                            cosa acerca del clima, la contaminación, consejos para cuidar el planeta o incluso sobre
+                            esta plataforma. Les responderé según la información disponible en mi base de datos.
+
+                            Si desean apoyar con sugerencias, comentarios o contribuir con datos adicionales, pueden
+                            hacerlo dando clic <a href="http://127.0.0.1:5000/" target="_blank"
+                                style="color: #c2e7ff; text-decoration: underline;">aquí</a>.
+                            ¡Juntos hagamos de Querétaro un lugar más sostenible!
                         </p>
                     </div>
                 </div>
@@ -308,71 +399,142 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Asegura que los popups estén ocultos al inicio
+        // Funciones para mostrar/ocultar popups
+        function showLogin() {
             document.getElementById("signup-box").classList.add("hidden");
-            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("login-box").classList.remove("hidden");
+        }
 
-            // Enlazar eventos de Log in y Sign up
-            document.querySelectorAll('.login-link a').forEach(link => {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault(); // Previene comportamiento por defecto de los enlaces
+        function showSignup() {
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("signup-box").classList.remove("hidden");
+        }
+
+        function closeLoginBox() {
+            document.getElementById("login-box").classList.add("hidden");
+        }
+
+        function closeSignupBox() {
+            document.getElementById("signup-box").classList.add("hidden");
+        }
+
+        // Configuración de eventos
+        document.addEventListener("DOMContentLoaded", function () {
+            // Botón Sign Up en el menú principal
+            document.getElementById("pford-credits-button").addEventListener("click", function (e) {
+                e.stopPropagation(); // solo previene que se cierre el popup por clic externo
+            });
+
+            // Botón Sign Up dentro del popup de créditos
+            document.querySelectorAll('.signup-button').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    showSignup();
+                });
+            });
+
+            // Enlaces "Log in"
+            document.querySelectorAll('.login-link a, .login-text a').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     showLogin();
                 });
             });
 
-            // Enlazar eventos de Log in y Sign up
+            // Enlaces "Sign up"
             document.querySelectorAll('.signup-link a').forEach(link => {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault(); // Previene comportamiento por defecto de los enlaces
-                    showSignUp();
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSignup();
                 });
             });
 
-            document.querySelectorAll('.signup-button').forEach(button => {
-                button.addEventListener('click', function () {
-                    showSignup();
+            // Cerrar popups al hacer clic fuera (modificado para no interferir)
+            document.addEventListener('click', function (event) {
+                const popups = document.querySelectorAll('.pford-popup:not(.hidden), .disclaimer-box:not(.hidden)');
+                popups.forEach(popup => {
+                    if (!popup.contains(event.target)) {
+                        // Solo cerrar si no se hizo clic en ningún botón que pueda abrirlos
+                        if (!event.target.closest('#pford-credits-button, .signup-button, .login-link a, .signup-link a')) {
+                            popup.classList.add('hidden');
+                        }
+                    }
                 });
             });
         });
 
-        function submitSignup() {
+        // El resto de tus funciones (submitSignup, submitLogin, checkSession, etc.) permanecen igual
+        async function submitSignup() {
             const email = document.getElementById("institutional-email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
 
-            if (!email || !password || !confirmPassword) {
-                alert("Please fill in all fields.");
+            if (!email.endsWith('@soyunaq.mx')) {
+                showAuthPopup('Error', 'Solo se permiten correos institucionales @soyunaq.mx', true);
+                return;
+            }
+
+            if (password.length < 8) {
+                showAuthPopup('Error', 'La contraseña debe tener al menos 8 caracteres', true);
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert("Passwords do not match.");
+                showAuthPopup('Error', 'Las contraseñas no coinciden', true);
                 return;
             }
 
-            fetch('/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: email, password: password, full_name: "" }) // Sending empty full_name
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        alert(data.message);
-                    } else {
-                        alert("Error: " + data.error);
-                    }
-                })
-                .catch(error => console.error("Error:", error));
-        }
-    </script>
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-    <script>
-        function closeSignupBox() {
-            document.getElementById("signup-box").classList.add("hidden");
+                const data = await response.json();
+
+                if (data.error) {
+                    showAuthPopup('Error', data.error, true);
+                } else {
+                    showAuthPopup('¡Éxito!', `Bienvenido ${data.user.email}. Has ganado 10 créditos iniciales.`, false);
+                    updateUIForLoggedInUser(data.user);
+                    closeSignupBox();
+                }
+            } catch (error) {
+                showAuthPopup('Error', 'Error de conexión. Intenta nuevamente.', true);
+            }
+        }
+
+        async function submitLogin() {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            if (!email || !password) {
+                showAuthPopup('Error', 'Por favor ingresa tu correo y contraseña', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    showAuthPopup('Error', data.error, true);
+                } else {
+                    showAuthPopup('¡Bienvenido!', `Hola ${data.user.email}. Tienes ${data.user.credits} créditos.`, false);
+                    updateUIForLoggedInUser(data.user);
+                    closeLoginBox();
+                }
+            } catch (error) {
+                showAuthPopup('Error', 'Error de conexión. Intenta nuevamente.', true);
+            }
         }
     </script>
 
@@ -413,31 +575,77 @@
     </script>
 
     <script>
-        function showLogin() {
-            document.getElementById("signup-box").classList.add("hidden"); // Oculta Sign Up
-            document.getElementById("login-box").classList.remove("hidden"); // Muestra Log In
+        function checkSession() {
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in && data.user) {
+                        updateUIForLoggedInUser(data.user);
+                    }
+                })
+                .catch(error => console.error('Error verificando sesión:', error));
         }
 
-        function showSignup() {
-            document.getElementById("login-box").classList.add("hidden"); // Oculta Log In
-            document.getElementById("signup-box").classList.remove("hidden"); // Muestra Sign Up
+        function showAuthPopup(title, message, isError) {
+            document.getElementById("auth-success-popup").classList.remove("hidden");
+            document.querySelector("#auth-success-popup .intro-title").textContent = title;
+            document.getElementById("auth-message").textContent = message;
+
+            if (isError) {
+                document.querySelector("#auth-success-popup .accept-button").style.backgroundColor = "#ff4757";
+            } else {
+                document.querySelector("#auth-success-popup .accept-button").style.backgroundColor = "purple";
+            }
         }
 
-        function closeLoginBox() {
-            document.getElementById("login-box").classList.add("hidden");
+        function closeAuthPopup() {
+            document.getElementById("auth-success-popup").classList.add("hidden");
         }
 
-        function submitLogin() {
-            const email = document.getElementById("login-email").value;
-            const password = document.getElementById("login-password").value;
+        function updateUIForLoggedInUser(user) {
+            // Mostrar información del usuario
+            const userMenu = document.getElementById("user-menu");
+            const creditsButton = document.getElementById("pford-credits-button");
 
-            if (!email || !password) {
-                alert("Please enter your email and password.");
-                return;
+            if (userMenu && creditsButton) {
+                userMenu.style.display = "block";
+                creditsButton.style.display = "none";
+                document.getElementById("user-email-display").textContent = user.email;
+
+                // Actualizar créditos en el popup del logo
+                if (document.getElementById("popup-user-email")) {
+                    document.getElementById("popup-user-email").textContent = `Correo: ${user.email}`;
+                    document.getElementById("popup-user-credits").textContent = `Créditos: ${user.credits}`;
+                }
             }
 
-            alert("Log In Successful!");
+            // Actualizar el botón de créditos si existe
+            const pfordCreditsBtn = document.getElementById("pford-credits-button");
+            if (pfordCreditsBtn) {
+                pfordCreditsBtn.textContent = `${user.credits} Créditos`;
+            }
         }
+
+        document.getElementById("logout-btn")?.addEventListener("click", function () {
+            fetch('/logout')
+                .then(response => response.json())
+                .then(data => {
+                    showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
+                    document.getElementById("user-menu").style.display = "none";
+                    document.getElementById("pford-credits-button").style.display = "block";
+                    document.getElementById("pford-credits-button").textContent = "Sign up";
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                })
+                .catch(error => {
+                    showAuthPopup('Error', 'No se pudo cerrar la sesión', true);
+                });
+        });
+
+        // Verificar sesión al cargar la página
+        checkSession();
     </script>
 
     <script>
@@ -453,6 +661,13 @@
             document.querySelector("#menu button:nth-child(6)").addEventListener("click", function () {
                 showAboutBox();
             });
+        });
+
+        // En el evento DOMContentLoaded, agrega esto:
+        document.addEventListener('DOMContentLoaded', function () {
+            const topMenu = document.getElementById('top-menu');
+            topMenu.style.width = '100%';
+            topMenu.style.left = '0';
         });
     </script>
 
@@ -550,6 +765,202 @@
             } else {
                 container.style.display = "none";
                 iframe.src = ""; // Detener la animación para liberar memoria
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('main');
+            const topMenu = document.getElementById('top-menu');
+
+            toggleBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('sidebar-collapsed');
+                mainContent.classList.toggle('main-expanded');
+
+                // Ajustar el ancho del top-menu
+                if (sidebar.classList.contains('sidebar-collapsed')) {
+                    topMenu.style.width = '100%';
+                    topMenu.style.left = '0';
+                } else {
+                    topMenu.style.width = 'calc(100% - 300px)';
+                    topMenu.style.left = '300px';
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const logoImg = document.querySelector(".logo");
+            const popup = document.getElementById("user-credit-popup");
+
+            logoImg.addEventListener("click", () => {
+                if (sessionStorage.getItem("userEmail")) {
+                    // Llenar datos
+                    document.getElementById("popup-user-email").textContent = `Correo: ${sessionStorage.getItem("userEmail")}`;
+                    document.getElementById("popup-user-credits").textContent = `Créditos: ${sessionStorage.getItem("userCredits")}`;
+                    popup.classList.toggle("hidden");
+                }
+            });
+
+            // Cerrar si haces clic fuera
+            document.addEventListener("click", (e) => {
+                if (!popup.contains(e.target) && !logoImg.contains(e.target)) {
+                    popup.classList.add("hidden");
+                }
+            });
+        });
+
+        // Cerrar popups al hacer clic fuera de ellos
+        document.addEventListener('click', function (event) {
+            const popups = document.querySelectorAll('.pford-popup:not(.hidden), .disclaimer-box:not(.hidden)');
+            popups.forEach(popup => {
+                if (!popup.contains(event.target) &&
+                    !event.target.matches('#pford-credits-button, #pford-credits-button *, #logout-btn, #logout-btn *')) {
+                    popup.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Muestra el popup de redeem
+        function showRedeemPopup() {
+            // Verificar si el usuario está logeado
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        document.getElementById("redeem-popup").classList.remove("hidden");
+                        // Resetear el formulario
+                        document.getElementById("action-description").value = "";
+                        document.getElementById("action-image").value = "";
+                        document.getElementById("redeem-success").style.display = "none";
+                    } else {
+                        showAuthPopup('Error', 'Debes iniciar sesión para canjear acciones', true);
+                    }
+                });
+        }
+
+        function closeRedeemPopup() {
+            document.getElementById("redeem-popup").classList.add("hidden");
+        }
+
+        function submitRedeemAction() {
+            const description = document.getElementById("action-description").value;
+            const imageFile = document.getElementById("action-image").files[0];
+
+            if (!description || !imageFile) {
+                showAuthPopup('Error', 'Por favor completa todos los campos', true);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('image', imageFile);
+
+            fetch('/redeem_action', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar animación de éxito
+                        document.getElementById("redeem-success").style.display = "block";
+                        // Ocultar después de 3 segundos
+                        setTimeout(() => {
+                            closeRedeemPopup();
+                        }, 3000);
+                    } else {
+                        showAuthPopup('Error', data.error || 'Error al enviar la evidencia', true);
+                    }
+                })
+                .catch(error => {
+                    showAuthPopup('Error', 'Error de conexión', true);
+                });
+        }
+
+        // Agrega el event listener al botón
+        document.getElementById("redeem-actions-btn")?.addEventListener("click", showRedeemPopup);
+    </script>
+
+    <script>
+        // Funciones para Report Actions
+        function showReportPopup() {
+            const popup = document.getElementById("report-popup");
+            const loginMessage = document.getElementById("report-login-message");
+            const reportForm = document.getElementById("report-form");
+
+            // Verificar si el usuario está logeado
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        loginMessage.style.display = "none";
+                        reportForm.style.display = "block";
+                        // Resetear el formulario
+                        document.getElementById("report-description").value = "";
+                        document.getElementById("report-image").value = "";
+                        popup.classList.remove("hidden");
+                    } else {
+                        loginMessage.style.display = "block";
+                        reportForm.style.display = "none";
+                        popup.classList.remove("hidden");
+                        showAuthPopup('Error', 'Debes iniciar sesión para reportar acciones', true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verificando sesión:', error);
+                });
+        }
+
+        function closeReportPopup() {
+            document.getElementById("report-popup").classList.add("hidden");
+        }
+
+        function submitReportAction() {
+            const description = document.getElementById("report-description").value;
+            const imageFile = document.getElementById("report-image").files[0];
+
+            if (!description || !imageFile) {
+                showAuthPopup('Error', 'Por favor completa todos los campos', true);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('image', imageFile);
+
+            fetch('/report_action', {  // Cambiado a '/report_action'
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAuthPopup('Éxito', data.message || '¡Acción reportada con éxito! Se verificará pronto.', false);
+                        closeReportPopup();
+                    } else {
+                        showAuthPopup('Error', data.error || 'Error al enviar el reporte', true);
+                    }
+                })
+                .catch(error => {
+                    showAuthPopup('Error', 'Error de conexión: ' + error.message, true);
+                });
+        }
+
+        // Asignar el event listener correctamente
+        document.addEventListener("DOMContentLoaded", function () {
+            const reportBtn = document.getElementById("report-actions-btn");
+            if (reportBtn) {
+                reportBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    showReportPopup();
+                });
             }
         });
     </script>
