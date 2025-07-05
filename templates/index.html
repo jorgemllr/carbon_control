@@ -17,7 +17,7 @@
     <div id="video-overlay">
         <video autoplay muted playsinline id="loading-video">
             <source src="/static/videos/Intro.mp4" type="video/mp4">
-            Your browser does not support the video tag.
+            Tu navegador no admite la etiqueta de video.
         </video>
     </div>
 
@@ -25,18 +25,18 @@
     <div id="container">
         <aside id="sidebar" class="sidebar-collapsed"> <!-- Agrega class="sidebar-collapsed" aquí -->
             <div id="search-container">
-                <input type="text" placeholder="Search" id="search-bar">
+                <input type="text" placeholder="Buscar" id="search-bar">
                 <i class="fas fa-search search-icon" style="color: #c4c7c5;"></i>
             </div>
             <div id="menu">
-                <button>Local Data</button>
-                <button>Map Layers</button>
-                <button>Leaderboard</button>
-                <button>Help</button>
-                <button onclick="showIntroductionBox()">Introduction</button>
-                <button onclick="showAboutBox()">About the Creator</button>
+                <button>Datos Locales</button>
+                <button>Capas del Mapa</button>
+                <button>Tabla de Posiciones</button>
+                <button>Ayuda</button>
+                <button onclick="showIntroductionBox()">Introducción</button>
+                <button onclick="showAboutBox()">Sobre el Creador</button>
             </div>
-            <div id="info">Monitor your eco-actions, earn rewards, and help the planet.</div>
+            <div id="info">Monitorea tus acciones ecológicas, gana recompensas y ayuda al planeta.</div>
         </aside>
 
         <main class="main-expanded"> <!-- Agrega class="main-expanded" aquí -->
@@ -116,14 +116,13 @@
                     </div>
                 </div>
 
-                <button>Home</button>
-                <button id="report-actions-btn">Report Actions</button>
-                <button id="redeem-actions-btn">Redeem Actions</button>
-                <button id="toggle-live-data">Global CO₂ Evolution</button>
+                <button id="report-actions-btn">Reporta</button>
+                <button id="redeem-actions-btn">Canjea</button>
+                <button id="toggle-live-data">CO₂ Global</button>
 
                 <!-- Pford Credits Button with Clickable Pop-up -->
                 <div id="pford-credits-container">
-                    <button id="pford-credits-button">Sign up</button>
+                    <button id="pford-credits-button">Registrarse</button>
                     <!-- Pop-up Box (Initially Hidden) -->
                     <div id="pford-credits-box" class="pford-popup">
                         <div class="popup-header">
@@ -132,37 +131,39 @@
                         </div>
                         <div class="popup-divider"></div>
                         <p class="popup-text">
-                            Pford Credits are rewards you can earn by taking eco-friendly actions. These credits can be
-                            redeemed
-                            for benefits such as free public transport, discounts, and environmental incentives.
-                            Join the movement and start earning today!
+                            Los Pford Credits son recompensas que puedes ganar al realizar acciones ecológicas. Estos
+                            créditos pueden canjearse por beneficios como transporte público gratuito, descuentos e
+                            incentivos ambientales. ¡Únete al movimiento y empieza a ganar hoy mismo!
                         </p>
                         <div class="popup-divider"></div>
-                        <button class="signup-button">Sign Up</button>
+                        <button class="signup-button">Registrarse</button>
 
                         <!-- New Login Section -->
-                        <p class="login-text-small">Already have an account?</p>
-                        <p class="login-link"><a href="#" onclick="showLogin()">Log in</a></p>
+                        <p class="login-text-small">¿Ya tienes una cuenta?</p>
+                        <p class="login-link"><a href="#" onclick="showLogin()">Iniciar sesión</a></p>
                     </div>
                 </div>
                 <div id="user-menu" style="display: none;">
                     <span id="user-email-display" style="color: white; margin-right: 15px;"></span>
                     <button id="logout-btn" style="background-color: #ff4757;">Cerrar sesión</button>
+                    <div id="mobile-menu-toggle" class="mobile-only">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
                 </div>
             </div>
 
             <div id="introduction-box" class="introduction-popup hidden">
                 <div class="introduction-header">
-                    <span class="intro-title">Welcome to Carbon Control</span>
+                    <span class="intro-title">¡Bienvenido a Pford Credits!</span>
                     <button class="close-button" onclick="closeIntroductionBox()">&times;</button>
                 </div>
                 <div class="divider"></div>
                 <p class="introduction-text">
-                    This platform is designed to monitor climate impact, encourage eco-friendly actions, and reward
-                    sustainability efforts.
+                    Esta plataforma está diseñada para medir tu impacto ambiental, promover acciones ecológicas y
+                    recompensar tu compromiso sostenible.
 
-                    Instead of just telling you, let us show you! Watch this video to learn more about how Carbon
-                    Control works and how you can be part of the change.
+                    ¡Mejor que contártelo, preferimos mostrártelo! Mira este video para descubrir cómo funciona Pford
+                    Credits y cómo puedes unirte al cambio.
                 </p>
                 <div class="divider"></div>
 
@@ -171,7 +172,7 @@
                     <div class="video-container">
                         <video controls>
                             <source src="/static/videos/Carbon Control.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
+                            Tu navegador no admite la etiqueta de video.
                         </video>
                     </div>
                 </div>
@@ -181,24 +182,21 @@
             <div id="about-box" class="about-popup hidden">
                 <div class="about-header">
                     <img src="/static/images/IMG_3307.jpg" alt="Jorge" class="about-photo">
-                    <span class="about-title">About the Creator</span>
+                    <span class="about-title">Sobre el Creador</span>
                     <button class="close-button" onclick="closeAboutBox()">&times;</button>
                 </div>
                 <div class="divider"></div>
                 <p class="about-text">
-                    Hi, I'm Jorge, a first-year Aeronautical Engineering student with a deep passion
-                    for sustainability, technology, and innovation. Beyond my studies, I enjoy learning new languages,
-                    practicing athletics, and exploring ways to make a meaningful impact on the world.
-
-                    Carbon Control was born from my desire to merge environmental responsibility with modern technology.
-                    By creating Pford Credits, I aim to encourage and reward eco-friendly actions, making sustainability
-                    both accessible and rewarding. Join the movement and help shape a greener future with us!
+                    Soy Jorge, estudiante de Ingeniería Aeronáutica apasionado por desarrollar soluciones tecnológicas
+                    sostenibles. Pford Credits surge de mi visión de combinar innovación y cuidado ambiental,
+                    incentivando acciones ecológicas con recompensas tangibles. ¡Trabajemos juntos por un futuro más
+                    verde!
                 </p>
                 <div class="divider"></div>
                 <!-- Botón de Contacto -->
                 <a href="mailto:jorgecf29@hotmail.com?subject=Collaboration Request&body=Hi Jorge, I'd like to collaborate with you!"
                     class="contact-button">
-                    Contact Me
+                    Contáctame
                 </a>
             </div>
 
@@ -217,7 +215,7 @@
             </div>
 
             <section id="container-2">
-                <h3>Global Greenhouse Gas Emissions from 1958 - 2024</h3>
+                <h3>Emisiones Globales de Gases de Efecto Invernadero (1958 - 2024)</h3>
             </section>
 
             <section id="container-3">
@@ -227,9 +225,9 @@
             </section>
 
             <section id="year-selection">
-                <label for="year-select">Select year to visualize CO2 concentrations in the world</label>
+                <label for="year-select">Selecciona el año para visualizar concentraciones de CO₂ en el mundo</label>
                 <select id="year-select">
-                    <option value="">Select a year</option>
+                    <option value="">Selecciona un año</option>
                     <script>
                         for (let year = 1958; year <= 2024; year++) {
                             document.write(`<option value="${year}">${year}</option>`);
@@ -242,66 +240,65 @@
             <div id="signup-box" class="disclaimer-box hidden">
                 <div class="disclaimer-header">
                     <img src="/static/images/Pford_2.jpg" alt="Pford Logo" class="business-logo">
-                    <span class="business-name">Welcome to Pford Credits</span>
+                    <span class="business-name">Bienvenido/a a Pford Credits</span>
                     <button class="close-button" onclick="closeSignupBox()">&times;</button>
                 </div>
                 <div class="divider"></div>
                 <p class="disclaimer-text">
-                    Hey! Pford Credits is here to reward your eco-friendly actions. Right now, it's only available for
-                    students at the Universidad Aeronáutica en Querétaro, but we're growing fast. Soon, it'll be in
-                    Querétaro and beyond—why not get ahead and start earning today?
+                    Únete a la comunidad UNAQ que está transformando acciones ecológicas en recompensas reales. ¡Tus
+                    esfuerzos por el planeta merecen créditos!
                 </p>
                 <div class="divider"></div>
                 <div class="input-container">
-                    <label for="institutional-email">Institutional Email</label>
-                    <input type="email" id="institutional-email" placeholder="example@soyunaq.mx">
+                    <label for="institutional-email">Correo institucional</label>
+                    <input type="email" id="institutional-email" placeholder="ejemplo@soyunaq.mx">
                 </div>
 
                 <div class="input-container">
-                    <label for="password">Password</label>
+                    <label for="password">Contraseña</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" placeholder="Enter your password">
+                        <input type="password" id="password" placeholder="Ingresa tu contraseña">
                         <i class="fas fa-eye" id="toggle-password"
                             onclick="togglePassword('password', 'toggle-password')"></i>
                     </div>
                 </div>
 
                 <div class="input-container">
-                    <label for="confirm-password">Confirm Password</label>
+                    <label for="confirm-password">Confirmar contraseña</label>
                     <div class="password-wrapper">
-                        <input type="password" id="confirm-password" placeholder="Confirm your password">
+                        <input type="password" id="confirm-password" placeholder="Confirmar contraseña">
                         <i class="fas fa-eye" id="toggle-confirm-password"
                             onclick="togglePassword('confirm-password', 'toggle-confirm-password')"></i>
                     </div>
                 </div>
 
                 <div class="divider"></div>
-                <button class="accept-button" onclick="submitSignup()">Sign Up</button>
+                <button class="accept-button" onclick="submitSignup()">Registrarse</button>
 
                 <!-- New Login Section -->
-                <p class="login-text">Already have an account?</p>
-                <p class="login-link"><a href="#" onclick="showLogin()">Log in</a></p>
+                <p class="login-text">¿Ya tienes una cuenta?</p>
+                <p class="login-link"><a href="#" onclick="showLogin()">Iniciar sesión</a></p>
             </div>
 
             <!-- Log In Pop-up Box (Initially Hidden) -->
             <div id="login-box" class="disclaimer-box hidden">
                 <div class="disclaimer-header">
                     <img src="/static/images/Pford_2.jpg" alt="Pford Logo" class="business-logo">
-                    <span class="business-name">Welcome Back to Pford Credits</span>
+                    <span class="business-name">¡Bienvenido/a de vuelta a Pford Credits!</span>
                     <button class="close-button" onclick="closeLoginBox()">&times;</button>
                 </div>
                 <div class="divider"></div>
                 <p class="disclaimer-text">
-                    Log in to your Pford Credits account to track your rewards and redeem them for benefits.
+                    Inicia sesión en tu cuenta Pford Credits para ver tus recompensas y canjearlas por beneficios.
                 </p>
                 <div class="divider"></div>
                 <div class="input-container">
-                    <label for="login-email">Institutional Email</label>
+                    <label for="login-email">Correo institucional</label>
                     <input type="email" id="login-email" placeholder="example@soyunaq.mx">
                 </div>
 
                 <div class="input-container">
-                    <label for="login-password">Password</label>
+                    <label for="login-password">Contraseña</label>
                     <div class="password-wrapper">
                         <input type="password" id="login-password" placeholder="Enter your password">
                         <i class="fas fa-eye" id="toggle-login-password"
@@ -310,11 +307,11 @@
                 </div>
 
                 <div class="divider"></div>
-                <button class="accept-button" onclick="submitLogin()">Log In</button>
+                <button class="accept-button" onclick="submitLogin()">Iniciar sesión</button>
 
                 <!-- New Sign Up Section -->
-                <p class="login-text">Don't have an account?</p>
-                <p class="signup-link"><a href="#" onclick="showSignup()">Create one</a></p>
+                <p class="login-text">¿Aún no tienes cuenta?</p>
+                <p class="signup-link"><a href="#" onclick="showSignup()">Regístrate aquí</a></p>
             </div>
 
             <header id="header">
@@ -324,8 +321,8 @@
             </header>
 
             <section id="info-above-map">
-                <h3>Your Local Climate Impact</h3>
-                <p>See How Climate Change is Affecting Your Region</p>
+                <h3>Tu impacto climático local</h3>
+                <p>Descubre cómo el cambio climático afecta tu región</p>
             </section>
 
             <section id="map-container">
@@ -338,15 +335,12 @@
                         class="pford-image" />
                     <div class="pford-info">
                         <p id="pford-message">
-                            ¡Hola comunidad UNAQ! Mi nombre es Pford, y soy un asistente virtual diseñado para brindar
-                            información sobre el medio ambiente en el estado de Querétaro. Pueden preguntarme cualquier
-                            cosa acerca del clima, la contaminación, consejos para cuidar el planeta o incluso sobre
-                            esta plataforma. Les responderé según la información disponible en mi base de datos.
+                            ¡Hola UNAQ! Soy Pford, tu asistente ambiental virtual. Puedes consultarme sobre clima,
+                            contaminación o cómo cuidar el planeta en Querétaro.
 
-                            Si desean apoyar con sugerencias, comentarios o contribuir con datos adicionales, pueden
-                            hacerlo dando clic <a href="http://127.0.0.1:5000/" target="_blank"
-                                style="color: #c2e7ff; text-decoration: underline;">aquí</a>.
-                            ¡Juntos hagamos de Querétaro un lugar más sostenible!
+                            <a href="http://127.0.0.1:5000/" target="_blank"
+                                style="color: #c2e7ff; text-decoration: underline;">Déjanos tus sugerencias</a> para
+                            mejorar juntos nuestro entorno.
                         </p>
                     </div>
                 </div>
@@ -633,7 +627,7 @@
                     showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
                     document.getElementById("user-menu").style.display = "none";
                     document.getElementById("pford-credits-button").style.display = "block";
-                    document.getElementById("pford-credits-button").textContent = "Sign up";
+                    document.getElementById("pford-credits-button").textContent = "Sign upss";
 
                     setTimeout(() => {
                         window.location.reload();
@@ -773,22 +767,42 @@
         document.addEventListener('DOMContentLoaded', function () {
             const toggleBtn = document.getElementById('sidebar-toggle');
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('main');
             const topMenu = document.getElementById('top-menu');
+            const mainContent = document.querySelector('main');
 
-            toggleBtn.addEventListener('click', function () {
+            function handleSidebarToggle() {
                 sidebar.classList.toggle('sidebar-collapsed');
-                mainContent.classList.toggle('main-expanded');
 
-                // Ajustar el ancho del top-menu
-                if (sidebar.classList.contains('sidebar-collapsed')) {
-                    topMenu.style.width = '100%';
-                    topMenu.style.left = '0';
-                } else {
-                    topMenu.style.width = 'calc(100% - 300px)';
-                    topMenu.style.left = '300px';
+                // Comportamiento para móvil
+                if (window.innerWidth <= 768) {
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        topMenu.style.left = '0';
+                        topMenu.style.width = '100%';
+                    } else {
+                        topMenu.style.left = '250px';
+                        topMenu.style.width = 'calc(100% - 250px)';
+                    }
                 }
-            });
+                // Comportamiento para escritorio
+                else {
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        mainContent.classList.add('main-expanded');
+                        topMenu.style.width = '100%';
+                        topMenu.style.left = '0';
+                    } else {
+                        mainContent.classList.remove('main-expanded');
+                        topMenu.style.width = 'calc(100% - 300px)';
+                        topMenu.style.left = '300px';
+                    }
+                }
+            }
+
+            toggleBtn.addEventListener('click', handleSidebarToggle);
+
+            // Asegurar estado inicial correcto
+            if (window.innerWidth > 768 && sidebar.classList.contains('sidebar-collapsed')) {
+                mainContent.classList.add('main-expanded');
+            }
         });
     </script>
 
@@ -962,6 +976,27 @@
                     showReportPopup();
                 });
             }
+        });
+    </script>
+
+    <script>
+        // Manejar el menú en dispositivos móviles
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const topMenu = document.getElementById('top-menu');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function () {
+                    topMenu.classList.toggle('mobile-menu-expanded');
+                });
+            }
+
+            // Cerrar menús al hacer clic fuera
+            document.addEventListener('click', function (e) {
+                if (mobileMenuToggle && !mobileMenuToggle.contains(e.target)) {
+                    topMenu.classList.remove('mobile-menu-expanded');
+                }
+            });
         });
     </script>
 
