@@ -878,3 +878,259 @@ main {
     flex-direction: column;
     gap: 15px;
 }
+
+/* Media queries para dispositivos móviles */
+@media (max-width: 768px) {
+
+    /* Ajustes para el menú superior */
+    #top-menu {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        /* Inicia pegado al sidebar */
+        width: calc(100% - 250px);
+        height: 10px;
+        margin: 0;
+        padding: 0 10px;
+        box-sizing: border-box;
+        transition: left 0.3s ease;
+        z-index: 1001;
+    }
+
+
+    /* Cuando el sidebar está colapsado */
+    #sidebar.sidebar-collapsed+main #top-menu {
+        left: 0;
+        width: 100%;
+    }
+
+    /* Ajusta el sidebar para móviles */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    #sidebar.sidebar-collapsed {
+        transform: translateX(-250px);
+    }
+
+    /* Ajusta el main para que no quede espacio */
+    main {
+        margin-top: 230px !important;
+        /* Aumenta este valor si necesitas más espacio */
+        /* Igual a la altura del header */
+        margin-left: 0;
+        padding-top: 20px;
+    }
+
+    /* Asegura que el contenido no se desplace debajo del header */
+    main>*:first-child {
+        margin-top: 0;
+    }
+
+    #top-menu button {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin: 2px;
+        flex-grow: 1;
+        min-width: 80px;
+    }
+
+    #pford-credits-container {
+        position: relative;
+        display: flex;
+        /* Cambiado de inline-block a flex */
+        flex-grow: 1;
+        /* Ocupa espacio disponible */
+        min-width: 0;
+        /* Permite que se reduzca */
+    }
+
+    #top-menu .logo {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+
+    /* Muestra todos los botones importantes */
+    #toggle-live-data,
+    #report-actions-btn,
+    #redeem-actions-btn,
+    #logo {
+        display: inline-block !important;
+    }
+
+    /* Ajustar el botón de créditos */
+    #pford-credits-button {
+        width: 100%;
+        flex-grow: 1;
+        min-width: 0;
+        padding: 8px 12px;
+        /* Igual que otros botones */
+        margin: 2px;
+        /* Igual que otros botones */
+        font-size: 12px;
+        /* Igual que otros botones */
+        white-space: nowrap;
+        /* Evita salto de línea */
+    }
+
+    /* Ajustar el botón de toggle */
+    .toggle-btn {
+        font-size: 1.2rem;
+        margin-right: 5px;
+    }
+
+    /* Ajustar el menú de usuario */
+    #user-menu {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    #user-email-display {
+        font-size: 10px;
+        margin-right: 0;
+        margin-bottom: 2px;
+    }
+
+    #logout-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    /* Ajustar el menú lateral para móviles */
+    #sidebar {
+        width: 250px;
+    }
+
+    #sidebar.sidebar-collapsed {
+        transform: translateX(-250px);
+    }
+
+    /* Ajustar el contenido principal */
+    main {
+        margin-left: 0;
+    }
+
+    /* Ajustar popups para móviles */
+    .pford-popup {
+        position: fixed;
+        top: 180px;
+        /* Ajusta esta posición según necesites */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        /* Ocupa casi todo el ancho de la pantalla */
+        max-width: 350px;
+        /* Máximo ancho permitido (ajustable) */
+        min-height: 200px;
+        /* Altura mínima para mejor visualización */
+        padding: 20px;
+        /* Más espacio interno */
+        font-size: 14px;
+        /* Tamaño de fuente legible */
+        z-index: 10000;
+        /* Asegura que esté por encima de todo */
+    }
+
+    /* Ajusta el contenido interno para pantallas pequeñas */
+    .pford-popup .popup-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pford-popup .pford-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .pford-popup .popup-title {
+        font-size: 18px;
+    }
+
+    .pford-popup .popup-text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .about-popup,
+    .introduction-popup,
+    #signup-box,
+    #login-box {
+        width: 100%;
+        max-width: 380px;
+        padding: 15px;
+    }
+
+    /* Ajustar el contenedor de Pford */
+    #container-info-below-map {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pford-image {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    /* Ajustar el selector de año */
+    #year-selection {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Asegura que los controles del mapa estén detrás del sidebar */
+    .leaflet-top,
+    .leaflet-bottom,
+    .leaflet-control {
+        z-index: 999 !important;
+        /* Un valor menor que el sidebar (1000) */
+    }
+
+    /* Opcional: si hay marcas de agua específicas que necesitan ajuste */
+    .leaflet-control-attribution {
+        z-index: 999 !important;
+    }
+}
+
+/* Para pantallas muy pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+
+    /* Menú superior como desplegable */
+    #top-menu {
+        height: auto;
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    #top-menu button {
+        width: 100%;
+        margin: 2px 0;
+    }
+
+    /* Mostrar menú hamburguesa siempre */
+    .toggle-btn {
+        display: block;
+    }
+
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+}
