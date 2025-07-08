@@ -72,8 +72,17 @@ body.hidden-content #container {
     top: 0;
     height: 100vh;
     z-index: 1001;
-    overflow: hidden;
-    /* Evita el desplazamiento */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#menu {
+    flex-grow: 1;
+    /* Ocupa todo el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Distribuye el espacio */
 }
 
 #sidebar::-webkit-scrollbar {
@@ -91,7 +100,7 @@ body.hidden-content #container {
 
 #search-container {
     position: relative;
-    margin-bottom: 100px;
+    margin-bottom: 30px;
 }
 
 #search-bar {
@@ -125,6 +134,8 @@ body.hidden-content #container {
     cursor: pointer;
     border-radius: 100px;
     transition: background-color 0.3s;
+    font-size: 14px;
+    /* Tamaño de fuente consistente */
 }
 
 #menu button:hover {
@@ -133,9 +144,10 @@ body.hidden-content #container {
 
 #info {
     font-size: 14px;
-    margin-top: 100px;
+    margin-top: 30px;
     color: white;
     text-align: center;
+    padding-bottom: 20px;
 }
 
 #top-menu {
@@ -177,6 +189,16 @@ body.hidden-content #container {
     background-color: rgb(77, 0, 77);
 }
 
+/* Estilo específico para el botón de logout */
+#logout-btn {
+    background-color: #ff4757 !important;
+    /* Rojo para logout */
+}
+
+#logout-btn:hover {
+    background-color: #ff6b81 !important;
+}
+
 main {
     margin-top: 80px;
     flex-grow: 1;
@@ -200,16 +222,6 @@ main {
     text-align: center;
 }
 
-#info-above-map {
-    width: 100%;
-    background-color: #131314;
-    color: white;
-    padding: 15px;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
 #map-container {
     display: flex;
     flex-direction: column;
@@ -217,17 +229,44 @@ main {
     align-items: flex-start;
     padding: 15px;
     flex-grow: 2;
-    background-color: #131314;
+    background-color: black;
     border-radius: 20px;
     margin-bottom: 15px;
     width: auto;
     max-width: none;
+    position: relative;
+    /* Añade esto para posicionamiento relativo */
+}
+
+#map-header {
+    width: 100%;
+    background: black;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 20px 20px 0 0;
+    margin-bottom: 10px;
+}
+
+#map-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+#map-header p {
+    margin: 5px 0 0 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 300;
 }
 
 #map {
     width: 100%;
     height: 350px;
-    border-radius: 20px;
+    filter: hue-rotate(40deg) saturate(120%);
 }
 
 #info-below-map {
@@ -685,21 +724,7 @@ main {
     display: none;
 }
 
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 26px;
-    cursor: pointer;
-    color: white;
-    transition: color 0.3s ease-in-out;
-}
 
-.close-button:hover {
-    color: purple;
-}
 
 .contact-button {
     display: inline-block;
@@ -841,42 +866,268 @@ main {
     }
 }
 
-/* Estilos para el popup de reportar acciones */
-
-#report-popup .input-container {
-    margin: 15px 0;
-}
-
-#report-popup .input-container input[type="file"] {
-    color: white;
-    padding: 8px 0;
-}
-
-/* Añade esto a tu styles.css */
+/* Estilos base del popup de reportar */
 #report-popup {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    max-width: 90%;
+    width: 85%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: rgba(20, 20, 20, 0.98);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0px 0px 20px rgba(128, 0, 128, 0.7);
     z-index: 10000;
+    color: white;
+    overflow: hidden;
     display: none;
-    /* Se controla con la clase hidden */
-}
-
-#report-popup.hidden {
-    display: none;
-}
-
-#report-popup:not(.hidden) {
-    display: block;
-}
-
-#report-form {
-    display: flex;
     flex-direction: column;
+}
+
+#report-popup.active {
+    display: flex;
+}
+
+#report-popup .report-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 15px;
+    margin-bottom: 10px;
+}
+
+#report-popup .report-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+}
+
+#report-popup .report-divider {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 10px 0;
+    width: 100%;
+}
+
+#report-popup .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: rgb(255, 255, 255);
+    padding: 0;
+    margin: 0;
+}
+
+#report-popup .close-button:hover {
+    color: purple;
+}
+
+#report-popup .report-content {
+    width: 100%;
+    overflow: auto;
+    margin-top: 15px;
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+/* Barra de scroll */
+#report-popup .report-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#report-popup .report-content::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 10px;
+}
+
+#report-popup .report-content::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 128, 0.6);
+    border-radius: 10px;
+}
+
+#report-popup .report-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 32, 240, 0.8);
+}
+
+/* Inputs y selects específicos del reporte */
+#report-popup .report-input-container {
+    margin-bottom: 20px;
+}
+
+#report-popup .report-input-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #e1e0e5;
+}
+
+#report-popup .report-select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background-color: #1b1b1c;
+    color: white;
+    border: 1px solid #444;
+    font-size: 14px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+#report-popup .report-select:focus {
+    outline: none;
+    border-color: purple;
+    box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.3);
+}
+
+/* Textarea específico del reporte */
+#report-popup .report-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background-color: #1b1b1c;
+    color: white;
+    border: 1px solid #444;
+    resize: vertical;
+    min-height: 100px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+#report-popup .report-textarea:focus {
+    outline: none;
+    border-color: purple;
+    box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.3);
+}
+
+/* Input de archivo específico del reporte */
+#report-popup .report-file-input-container {
+    position: relative;
+    margin-top: 15px;
+}
+
+#report-popup .report-file-input-label {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #1b1b1c;
+    border: 1px dashed #444;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#report-popup .report-file-input-label:hover {
+    border-color: purple;
+    background-color: rgba(128, 0, 128, 0.1);
+}
+
+#report-popup .report-file-input-label i {
+    margin-right: 8px;
+    color: purple;
+}
+
+#report-popup .report-file-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+#report-popup .report-file-name {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #aaa;
+    word-break: break-all;
+}
+
+/* Botón de enviar específico del reporte */
+#report-popup .report-submit-button {
+    background-color: purple;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 15px;
+}
+
+#report-popup .report-submit-button:hover {
+    background-color: rgb(77, 0, 77);
+}
+
+#report-popup .report-submit-button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    #report-popup {
+        width: 95%;
+        padding: 20px 15px;
+        max-height: 80vh;
+    }
+
+    #report-popup .report-title {
+        font-size: 20px;
+    }
+
+    #report-popup .report-select,
+    #report-popup .report-textarea {
+        padding: 10px 12px;
+    }
+
+    #report-popup .report-file-input-label {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #report-popup {
+        max-height: 85vh;
+        padding: 15px 10px;
+    }
+
+    #report-popup .report-title {
+        font-size: 18px;
+    }
+
+    #report-popup .report-select,
+    #report-popup .report-textarea {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+
+    #report-popup .report-file-input-label {
+        font-size: 13px;
+    }
+
+    #report-popup .report-submit-button {
+        padding: 10px 15px;
+        font-size: 15px;
+    }
 }
 
 /* Media queries para dispositivos móviles */
@@ -944,12 +1195,10 @@ main {
 
     #pford-credits-container {
         position: relative;
+        width: 100%;
         display: flex;
-        /* Cambiado de inline-block a flex */
         flex-grow: 1;
-        /* Ocupa espacio disponible */
         min-width: 0;
-        /* Permite que se reduzca */
     }
 
     #top-menu .logo {
@@ -972,13 +1221,9 @@ main {
         flex-grow: 1;
         min-width: 0;
         padding: 8px 12px;
-        /* Igual que otros botones */
         margin: 2px;
-        /* Igual que otros botones */
         font-size: 12px;
-        /* Igual que otros botones */
         white-space: nowrap;
-        /* Evita salto de línea */
     }
 
     /* Ajustar el botón de toggle */
@@ -1059,10 +1304,7 @@ main {
         line-height: 1.5;
     }
 
-    .about-popup,
-    .introduction-popup,
-    #signup-box,
-    #login-box {
+    .about-popup {
         width: 100%;
         max-width: 380px;
         padding: 15px;
@@ -1133,4 +1375,500 @@ main {
     .desktop-only {
         display: none;
     }
+}
+
+/* Estilos base del popup de autenticación */
+#auth-success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    /* Ancho para desktop */
+    max-width: 500px;
+    /* Máximo ancho */
+    background: rgba(30, 30, 30, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    z-index: 10000;
+}
+
+/* Ajustes para móviles */
+/* Añade esto al final de tu archivo styles.css */
+@media (max-width: 768px) {
+    #auth-success-popup {
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 100% !important;
+        max-width: 380px !important;
+        /* Aumentado de 300px a 350px */
+        padding: 20px 15px !important;
+        /* Añade más espacio interno */
+    }
+
+    /* Ajuste para pantallas pequeñas */
+    @media (max-height: 700px) {
+        #auth-success-popup {
+            top: 45% !important;
+            max-width: 320px !important;
+            /* Un poco menos ancho en pantallas cortas */
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .introduction-popup {
+        width: 90% !important;
+        max-width: 100%;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        padding: 15px;
+    }
+
+    .content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        padding: 0 !important;
+        gap: 0 !important;
+        min-height: auto !important;
+    }
+
+    .intro-photo {
+        width: 150px !important;
+        height: 150px !important;
+        margin-top: 8px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .video-container {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .video-container video {
+        max-width: 100% !important;
+        height: auto;
+    }
+
+    .intro-title {
+        font-size: 24px !important;
+    }
+
+    .introduction-text {
+        margin-bottom: 8px !important;
+        /* Controla espacio después del texto */
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .content-container {
+        overflow: hidden;
+    }
+}
+
+/* Estilos mejorados para la sección de usuario en el sidebar */
+#user-profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    padding: 15px;
+    background: rgba(30, 30, 30, 0.3);
+    border-radius: 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+#user-profile-sidebar:hover {
+    background: rgba(30, 30, 30, 0.5);
+    transform: translateY(-2px);
+}
+
+.sidebar-user-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid purple;
+    padding: 3px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(128, 0, 128, 0.5);
+    transition: all 0.3s ease;
+}
+
+.sidebar-user-photo:hover {
+    transform: scale(1.05);
+    background-color: rgb(77, 0, 77);
+}
+
+.sidebar-login-text {
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: purple;
+    transition: all 0.3s ease;
+}
+
+.sidebar-login-text:hover {
+    background-color: rgb(77, 0, 77);
+    text-decoration: underline;
+}
+
+.sidebar-user-info {
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%;
+    padding: 0 15px;
+}
+
+#sidebar-user-email {
+    font-size: 15px;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+#sidebar-user-credits {
+    color: #00b894;
+    font-weight: bold;
+    margin-top: 5px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+#sidebar-user-credits::before {
+    content: "🟢";
+    font-size: 12px;
+}
+
+/* Estilos para el control de cámara */
+#camera-control {
+    width: 100%;
+    margin-top: 10px;
+    background-color: black;
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+}
+
+#toggle-camera-info {
+    width: 100%;
+    padding: 8px 15px;
+    background-color: purple;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#toggle-camera-info:hover {
+    background-color: rgb(77, 0, 77);
+}
+
+#toggle-camera-info i {
+    transition: transform 0.3s ease;
+}
+
+#camera-control.active #toggle-camera-info i {
+    transform: rotate(180deg);
+}
+
+#camera-info {
+    padding: 10px 15px;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    background-color: black;
+    margin-top: 10px;
+}
+
+#camera-info.hidden {
+    display: none;
+}
+
+.sidebar-user-name {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+    color: white;
+}
+
+/* Estilos mejorados para el popup de acciones */
+.actions-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    max-width: 900px;
+    max-height: 80vh;
+    background: rgba(20, 20, 20, 0.98);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0px 0px 20px rgba(128, 0, 128, 0.7);
+    z-index: 10000;
+    color: white;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.actions-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.actions-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+}
+
+.popup-divider {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 10px 0;
+    width: 100%;
+}
+
+/* Estilo específico para el botón de cerrar */
+.actions-popup .close-button {
+    background: none !important;
+    border: none !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 15px !important;
+    color: rgb(255, 255, 255) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+}
+
+.actions-popup .close-button:hover {
+    color: purple !important;
+    background: none !important;
+    transform: none !important;
+}
+
+.actions-table-container {
+    width: 100%;
+    overflow: auto;
+    margin-top: 15px;
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+/* Estilo personalizado para la barra de scroll */
+.actions-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.actions-table-container::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 10px;
+}
+
+.actions-table-container::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 128, 0.6);
+    border-radius: 10px;
+}
+
+.actions-table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 32, 240, 0.8);
+}
+
+.actions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 600px;
+}
+
+/* Estilos específicos para botones dentro de la tabla */
+.actions-table button {
+    background-color: purple;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.actions-table button:hover {
+    background-color: rgb(77, 0, 77);
+}
+
+.actions-table th,
+.actions-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.actions-table th {
+    background-color: rgba(128, 0, 128, 0.25);
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(5px);
+}
+
+.actions-table tr:hover {
+    background-color: rgba(184, 153, 137, 0.15);
+}
+
+.actions-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.actions-table tr:nth-child(even):hover {
+    background-color: rgba(128, 0, 128, 0.15);
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .actions-popup {
+        width: 95%;
+        padding: 20px 15px;
+        max-height: 80vh;
+    }
+
+    .actions-title {
+        font-size: 20px;
+    }
+
+    .actions-table {
+        font-size: 13px;
+    }
+
+    .actions-table th,
+    .actions-table td {
+        padding: 10px 12px;
+    }
+
+    .actions-popup .close-button {
+        top: 5px !important;
+        right: 10px !important;
+        font-size: 30px !important;
+    }
+
+    .actions-header {
+        margin-bottom: 8px;
+    }
+
+    .popup-divider {
+        margin: 8px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .actions-popup {
+        max-height: 80vh;
+        padding: 15px 10px;
+    }
+
+    .actions-table {
+        font-size: 12px;
+        min-width: 100%;
+    }
+
+    .actions-table th,
+    .actions-table td {
+        padding: 8px 10px;
+    }
+
+    .actions-popup .close-button {
+        top: 5px !important;
+        right: 8px !important;
+        font-size: 24px !important;
+    }
+
+    .actions-header {
+        margin-bottom: 6px;
+    }
+
+    .popup-divider {
+        margin: 6px 0;
+    }
+}
+
+/* Estilos para el select de acciones */
+.actions-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #1b1b1c;
+    color: white;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+}
+
+.actions-select:focus {
+    outline: none;
+    border-color: purple;
+}
+
+/* Estilos para el textarea */
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #1b1b1c;
+    color: white;
+    border: 1px solid #444;
+    resize: vertical;
+}
+
+/* Estilos para el botón de enviar */
+.actions-table-button {
+    background-color: purple;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.actions-table-button:hover {
+    background-color: rgb(77, 0, 77);
+}
+
+/* Estilos para el input de archivo */
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #1b1b1c;
+    color: white;
+    border-radius: 5px;
+    border: 1px dashed #444;
 }
