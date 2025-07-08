@@ -43,7 +43,6 @@
 
             <div id="menu">
                 <button>Tabla de Posiciones</button>
-                <button>Ayuda</button>
                 <button onclick="showIntroductionBox()">Introducción</button>
                 <button onclick="showAboutBox()">Sobre el Creador</button>
             </div>
@@ -188,7 +187,8 @@
                     <div class="actions-header">
                         <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
                         <span class="actions-title">Reportar Acción Ecológica</span>
-                        <button class="close-button" onclick="closeReportPopup()">&times;</button>
+                        <button class="close-button"
+                            onclick="closeReportPopup(); event.stopPropagation();">&times;</button>
                     </div>
                     <div class="popup-divider"></div>
 
@@ -513,6 +513,26 @@
             });
         });
 
+        // Verificar datos de sesión al cargar la página
+        document.addEventListener("DOMContentLoaded", function () {
+            // Mostrar datos guardados mientras se verifica con el servidor
+            const savedEmail = sessionStorage.getItem("userEmail");
+            const savedCredits = sessionStorage.getItem("userCredits");
+            const savedName = sessionStorage.getItem("userName");
+
+            if (savedEmail) {
+                const userData = {
+                    email: savedEmail,
+                    credits: savedCredits || "0",
+                    name: savedName || savedEmail.split('@')[0]
+                };
+                updateUIForLoggedInUser(userData);
+            }
+
+            // Luego verificar con el servidor
+            checkSession();
+        });
+
         // Hide loading video after it ends
         document.getElementById('loading-video').addEventListener('ended', function () {
             const videoOverlay = document.getElementById('video-overlay');
@@ -692,7 +712,7 @@
             const email = document.getElementById("institutional-email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
-            const name = document.getElementById("user-name").value; // Nuevo campo
+            const name = document.getElementById("user-name").value;
 
             if (!name) {
                 showAuthPopup('Error', 'Por favor ingresa tu nombre completo', true);
@@ -718,7 +738,7 @@
                 const response = await fetch('/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, name }) // Incluir el nombre
+                    body: JSON.stringify({ email, password, name })
                 });
 
                 const data = await response.json();
@@ -726,7 +746,12 @@
                 if (data.error) {
                     showAuthPopup('Error', data.error, true);
                 } else {
-                    showAuthPopup('¡Éxito!', `Bienvenido ${name}. Has ganado 10 créditos iniciales.`, false);
+                    // Almacenar datos en sessionStorage
+                    sessionStorage.setItem("userEmail", data.user.email);
+                    sessionStorage.setItem("userCredits", data.user.credits);
+                    sessionStorage.setItem("userName", data.user.name);
+
+                    showAuthPopup('¡Éxito!', `Bienvenido ${data.user.name}. Has ganado 10 créditos iniciales.`, false);
                     updateUIForLoggedInUser(data.user);
                     closeSignupBox();
                 }
@@ -756,6 +781,11 @@
                 if (data.error) {
                     showAuthPopup('Error', data.error, true);
                 } else {
+                    // Almacenar datos en sessionStorage
+                    sessionStorage.setItem("userEmail", data.user.email);
+                    sessionStorage.setItem("userCredits", data.user.credits);
+                    sessionStorage.setItem("userName", data.user.name || data.user.email.split('@')[0]);
+
                     // Extraer solo el primer nombre del nombre completo
                     const firstName = data.user.name ? data.user.name.split(' ')[0] : data.user.email.split('@')[0];
 
@@ -811,10 +841,22 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.logged_in && data.user) {
+                        // Guardar en sessionStorage
+                        sessionStorage.setItem("userEmail", data.user.email);
+                        sessionStorage.setItem("userCredits", data.user.credits);
+                        if (data.user.name) {
+                            sessionStorage.setItem("userName", data.user.name);
+                        }
+
+                        // Actualizar UI
                         updateUIForLoggedInUser(data.user);
                         updateReportButton(true);
                     } else {
                         updateReportButton(false);
+                        // Limpiar sessionStorage si no hay sesión
+                        sessionStorage.removeItem("userEmail");
+                        sessionStorage.removeItem("userCredits");
+                        sessionStorage.removeItem("userName");
                     }
                 })
                 .catch(error => console.error('Error verificando sesión:', error));
@@ -877,9 +919,11 @@
 
         // Actualiza la función updateUIForLoggedInUser existente
         function updateUIForLoggedInUser(user) {
-            const creditsButton = document.getElementById("pford-credits-button");
-            const firstName = user.name.split(' ')[0]; // Obtener solo el primer nombre
+            // Obtener primer nombre (o email si no hay nombre)
+            const firstName = user.name ? user.name.split(' ')[0] : user.email.split('@')[0];
 
+            // 1. Actualizar botón de créditos/logout
+            const creditsButton = document.getElementById("pford-credits-button");
             if (creditsButton) {
                 creditsButton.textContent = "Cerrar sesión";
                 creditsButton.style.backgroundColor = "#ff4757";
@@ -887,9 +931,17 @@
                     fetch('/logout')
                         .then(response => response.json())
                         .then(data => {
+                            // Limpiar sessionStorage
+                            sessionStorage.removeItem("userEmail");
+                            sessionStorage.removeItem("userCredits");
+                            sessionStorage.removeItem("userName");
+
                             showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
-                            updateReportButton(false); // Actualizar el botón de reportar
-                            // Resto del código existente...
+
+                            // Actualizar UI inmediatamente
+                            updateReportButton(false);
+
+                            // Restablecer sidebar
                             const sidebarLoginText = document.getElementById("sidebar-login-text");
                             const sidebarUserInfo = document.getElementById("sidebar-user-info");
                             const sidebarUserName = document.getElementById("sidebar-user-name");
@@ -900,26 +952,27 @@
                                 sidebarUserName.style.display = "none";
                             }
 
+                            // Restablecer botón de créditos
                             creditsButton.textContent = "Registrarse";
                             creditsButton.style.backgroundColor = "purple";
-                            creditsButton.onclick = null;
-
-                            creditsButton.addEventListener("click", function (e) {
+                            creditsButton.onclick = function (e) {
                                 e.stopPropagation();
                                 document.getElementById("pford-credits-box").style.display = "block";
-                            });
+                            };
 
+                            // Recargar después de 1.5 segundos
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1500);
                         })
                         .catch(error => {
                             showAuthPopup('Error', 'No se pudo cerrar la sesión', true);
+                            console.error('Logout error:', error);
                         });
                 };
             }
 
-            // Actualizar información en el sidebar
+            // 2. Actualizar información en el sidebar
             const sidebarPhoto = document.getElementById("sidebar-user-photo");
             const sidebarLoginText = document.getElementById("sidebar-login-text");
             const sidebarUserInfo = document.getElementById("sidebar-user-info");
@@ -932,12 +985,25 @@
                 sidebarUserInfo.classList.remove("hidden");
                 sidebarUserName.textContent = firstName;
                 sidebarUserName.style.display = "block";
-                sidebarUserEmail.textContent = user.email;
-                sidebarUserCredits.textContent = `${user.credits} Créditos`;
+                if (sidebarUserEmail) sidebarUserEmail.textContent = user.email;
+                if (sidebarUserCredits) sidebarUserCredits.textContent = `${user.credits} Créditos`;
             }
 
-            // Actualizar el botón de reportar
+            // 3. Actualizar popup de créditos del logo
+            if (document.getElementById("popup-user-email")) {
+                document.getElementById("popup-user-email").textContent = `Correo: ${user.email}`;
+                document.getElementById("popup-user-credits").textContent = `Créditos: ${user.credits}`;
+            }
+
+            // 4. Actualizar botón de reportar
             updateReportButton(true);
+
+            // 5. Actualizar cualquier otra UI necesaria
+            const reportBtn = document.getElementById("report-actions-btn");
+            if (reportBtn) {
+                reportBtn.textContent = "Reportar";
+                reportBtn.style.backgroundColor = "purple";
+            }
         }
 
         // Configurar el evento de clic para el botón de reportar
@@ -953,16 +1019,45 @@
             }
         });
 
-        document.getElementById("logout-btn")?.addEventListener("click", function () {
+        document.addEventListener("DOMContentLoaded", function () {
+            // --- Verificación inicial de sesión ---
+            // 1. Mostrar datos guardados mientras se verifica con el servidor
+            const savedEmail = sessionStorage.getItem("userEmail");
+            const savedCredits = sessionStorage.getItem("userCredits");
+            const savedName = sessionStorage.getItem("userName");
+
+            if (savedEmail) {
+                const userData = {
+                    email: savedEmail,
+                    credits: savedCredits || "0",
+                    name: savedName || savedEmail.split('@')[0]
+                };
+                updateUIForLoggedInUser(userData);
+            }
+
+            // 2. Verificación con el servidor (tu función existente)
+            checkSession();
+
+            // ... el resto de tu código de inicialización ...
+        });
+
+        // Función centralizada para manejar logout
+        function handleLogout() {
             fetch('/logout')
                 .then(response => response.json())
                 .then(data => {
+                    // 1. Limpiar sessionStorage
+                    sessionStorage.removeItem("userEmail");
+                    sessionStorage.removeItem("userCredits");
+                    sessionStorage.removeItem("userName");
+
+                    // 2. Mostrar confirmación
                     showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
 
-                    // Actualizar botón de reportar
+                    // 3. Actualizar UI inmediatamente
                     updateReportButton(false);
 
-                    // Restablecer el sidebar
+                    // 4. Restablecer sidebar
                     const sidebarLoginText = document.getElementById("sidebar-login-text");
                     const sidebarUserInfo = document.getElementById("sidebar-user-info");
                     const sidebarUserName = document.getElementById("sidebar-user-name");
@@ -973,33 +1068,19 @@
                         sidebarUserName.style.display = "none";
                     }
 
-                    // Restablecer botón de créditos
-                    const creditsButton = document.getElementById("pford-credits-button");
-                    if (creditsButton) {
-                        creditsButton.textContent = "Registrarse";
-                        creditsButton.style.backgroundColor = "purple";
-                        creditsButton.onclick = function (e) {
-                            e.stopPropagation();
-                            document.getElementById("pford-credits-box").style.display = "block";
-                        };
-                    }
-
-                    // Opción 1: Recargar la página después de 1.5 segundos
+                    // 5. Recargar después de 1.5 segundos
                     setTimeout(() => {
                         window.location.reload();
                     }, 1500);
-
-                    /* 
-                    // Opción 2: Actualizar UI sin recargar (más fluido)
-                    // Si prefieres no recargar la página, puedes usar esto en lugar del setTimeout:
-                    checkSession(); // Vuelve a verificar el estado de la sesión
-                    */
                 })
                 .catch(error => {
                     showAuthPopup('Error', 'No se pudo cerrar la sesión', true);
                     console.error('Logout error:', error);
                 });
-        });
+        }
+
+        // Asignar el manejador de eventos
+        document.getElementById("logout-btn")?.addEventListener("click", handleLogout);
 
         // Verificar sesión al cargar la página
         checkSession();
@@ -1252,31 +1333,46 @@
 
     <script>
 
-        function closeReportPopup() {
-            document.getElementById("report-popup").classList.add("hidden");
+        function showReportPopup() {
+            const reportPopup = document.getElementById("report-popup");
+            reportPopup.style.display = "flex";
+            reportPopup.classList.remove("hidden");
         }
 
         function submitReportAction() {
-            const description = document.getElementById("report-description").value;
+            const actionType = document.getElementById("action-type").value;
+            const otherAction = document.getElementById("other-action").value;
             const imageFile = document.getElementById("report-image").files[0];
 
-            if (!description || !imageFile) {
-                showAuthPopup('Error', 'Por favor completa todos los campos', true);
+            if (!actionType) {
+                showAuthPopup('Error', 'Por favor selecciona un tipo de acción', true);
+                return;
+            }
+
+            if (actionType === "otro" && !otherAction) {
+                showAuthPopup('Error', 'Por favor describe la acción realizada', true);
+                return;
+            }
+
+            if (!imageFile) {
+                showAuthPopup('Error', 'Por favor sube una foto como evidencia', true);
                 return;
             }
 
             const formData = new FormData();
-            formData.append('description', description);
+            formData.append('action_type', actionType);
+            formData.append('description', actionType === "otro" ? otherAction :
+                document.getElementById("action-type").options[document.getElementById("action-type").selectedIndex].text);
             formData.append('image', imageFile);
 
-            fetch('/report_action', {  // Cambiado a '/report_action'
+            fetch('/report_action', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showAuthPopup('Éxito', data.message || '¡Acción reportada con éxito! Se verificará pronto.', false);
+                        showAuthPopup('Éxito', '¡Acción reportada con éxito! Se verificará pronto.', false);
                         closeReportPopup();
                     } else {
                         showAuthPopup('Error', data.error || 'Error al enviar el reporte', true);
@@ -1348,7 +1444,16 @@
         // Función para cerrar el popup de reporte
         function closeReportPopup() {
             const reportPopup = document.getElementById("report-popup");
-            reportPopup.classList.remove("active");
+            if (reportPopup) {
+                reportPopup.classList.add("hidden");
+                reportPopup.style.display = "none";
+
+                // Opcional: Resetear el formulario
+                document.getElementById("action-type").value = "";
+                document.getElementById("other-action").value = "";
+                document.getElementById("other-action-container").classList.add("hidden");
+                document.getElementById("report-image").value = "";
+            }
         }
 
         // Función para enviar el reporte
