@@ -162,8 +162,9 @@
                 <td>{{ action.user_email }}</td>
                 <td>{{ action.description }}</td>
                 <td>
-                    <img src="{{ url_for('static', filename='uploads/' + action.image_path) }}" alt="Report image"
-                        class="action-image" onclick="openModal('{{ action.image_path }}')">
+                    <img src="{{ url_for('get_image', filename=action.image_path.split('/uploads/')[1]) }}"
+                        alt="Report image" class="action-image"
+                        onclick="openModal('{{ action.image_path.split('/uploads/')[1] }}')">
                 </td>
                 <td>{{ action.created_at.strftime('%Y-%m-%d %H:%M:%S') if action.created_at else '' }}</td>
                 <td>
@@ -279,6 +280,65 @@
             modal.style.display = "block";
             modalImg.src = "/static/uploads/" + imageSrc;  // Asegúrate de que la ruta sea correcta
         }
+    </script>
+
+    <script>
+        // Función para actualizar la tabla de acciones
+        function updateReportedActionsTable() {
+            fetch('/ZxK8pY2W/reported_actions/data') // Necesitarás crear esta ruta
+                .then(response => response.json())
+                .then(actions => {
+                    const container = document.querySelector('.actions-container');
+                    if (container) {
+                        container.innerHTML = ''; // Limpiar el contenedor
+
+                        actions.forEach(action => {
+                            const actionCard = document.createElement('div');
+                            actionCard.className = 'action-card';
+                            actionCard.innerHTML = `
+                        <img src="${action.image_path}" alt="Evidencia" class="action-image">
+                        <div class="action-details">
+                            <div class="action-header">
+                                <span class="action-user">${action.user_email}</span>
+                                <span class="action-date">${new Date(action.created_at).toLocaleString()}</span>
+                            </div>
+                            <p class="action-description">${action.description}</p>
+                            <p class="action-status">Estado: ${action.status}</p>
+                            <div class="action-buttons">
+                                <button onclick="updateActionStatus(${action.id}, 'approved')">Aprobar</button>
+                                <button onclick="updateActionStatus(${action.id}, 'rejected')">Rechazar</button>
+                            </div>
+                        </div>
+                    `;
+                            container.appendChild(actionCard);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error actualizando acciones:', error));
+        }
+
+        // Función para actualizar el estado de una acción
+        function updateActionStatus(actionId, newStatus) {
+            fetch('/admin/update_action_status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action_id: actionId, status: newStatus })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateReportedActionsTable(); // Refrescar la tabla
+                    } else {
+                        alert('Error: ' + (data.error || 'Error desconocido'));
+                    }
+                });
+        }
+
+        // Actualizar cada 10 segundos
+        setInterval(updateReportedActionsTable, 10000);
+
+        // Llamar al cargar la página
+        document.addEventListener('DOMContentLoaded', updateReportedActionsTable);
     </script>
 </body>
 
