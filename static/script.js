@@ -1,10 +1,10 @@
 // Inicializa el mapa con un zoom predeterminado
-var map = L.map('map').setView([20.626898, -100.187538], 17);
+var map = L.map('map').setView([20.588844, -100.389888], 14);
 
-// Agrega una capa de mapa satelital de Esri
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+// Mapa oscuro con toques púrpura (usando Thunderforest)
+L.tileLayer('https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=hAu1zgevGSOfDmhCieqY', {
     maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://www.esri.com/en-us/home">Esri</a>',
+    attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
 }).addTo(map);
 
 // Función para obtener la ubicación actual del usuario
