@@ -8,6 +8,9 @@ from datetime import datetime
 from functools import wraps
 from werkzeug.utils import secure_filename
 import boto3
+import logging  # <-- Agregar esta línea
+
+logging.basicConfig(level=logging.DEBUG)  # <-- Agregar esta línea
 
 # Configuración de OpenAI
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -24,9 +27,9 @@ DB_CONFIG = {
 # Configuración de AWS S3
 s3 = boto3.client(
     's3',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region_name=os.getenv('AWS_REGION')
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),  # Nombre estándar
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),  # Nombre estándar
+    region_name=os.getenv('AWS_REGION', 'us-east-1')  # Valor por defecto
 )
 
 app = Flask(__name__)
@@ -49,7 +52,9 @@ def upload_to_s3(file, filename):
                 'ContentType': file.content_type
             }
         )
-        return f"https://{os.getenv('S3_BUCKET_NAME')}.s3.amazonaws.com/uploads/{filename}"
+        url = f"https://{os.getenv('S3_BUCKET_NAME')}.s3.amazonaws.com/uploads/{filename}"
+        print(f"Image uploaded to S3. URL: {url}")  # Debug
+        return url
     except Exception as e:
         print(f"Error S3: {str(e)}")
         return None
@@ -363,44 +368,60 @@ def redeem_action():
 @login_required
 def report_action():
     try:
-        # Validación de campos
+        print("Report action started")  # Debug
         if 'image' not in request.files:
+            print("No image file in request")  # Debug
             return jsonify({'error': 'No se subió ninguna imagen'}), 400
             
         image_file = request.files['image']
+        print(f"Image file received: {image_file.filename}")  # Debug
         action_type = request.form.get('action_type')
         description = request.form.get('description')
         
+        print(f"Action type: {action_type}, Description: {description}")  # Debug
+        
         if not action_type:
+            print("Action type missing")  # Debug
             return jsonify({'error': 'Tipo de acción requerido'}), 400
             
         if image_file.filename == '':
+            print("Empty filename")  # Debug
             return jsonify({'error': 'Nombre de archivo no válido'}), 400
         
         if not allowed_file(image_file.filename):
+            print(f"Invalid file type: {image_file.filename}")  # Debug
             return jsonify({'error': 'Tipo de archivo no permitido'}), 400
             
         # Obtener información del usuario
+        print("Connecting to database to get user info")  # Debug
         conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT name, email FROM pford_users WHERE id = %s", (session['user_id'],))
         user = cursor.fetchone()
         
         if not user:
+            print("User not found in database")  # Debug
             cursor.close()
             conn.close()
             return jsonify({'error': 'Usuario no encontrado'}), 404
         
+        print(f"User found: {user['email']}")  # Debug
+        
         # 1. Subir imagen a S3
         filename = secure_filename(f"report_{session['user_id']}_{int(time.time())}_{image_file.filename}")
-        s3_url = upload_to_s3(image_file, filename)  # Usamos la función que creamos
+        print(f"Attempting to upload to S3 with filename: {filename}")  # Debug
+        s3_url = upload_to_s3(image_file, filename)
         
         if not s3_url:
+            print("Failed to upload to S3")  # Debug
             cursor.close()
             conn.close()
             return jsonify({'error': 'Error al subir la imagen'}), 500
         
+        print(f"Successfully uploaded to S3. URL: {s3_url}")  # Debug
+        
         # 2. Guardar en base de datos (con todos los campos)
+        print(f"Saving to DB with image URL: {s3_url}")  # Debug
         cursor.execute(
             """INSERT INTO reported_actions 
             (user_id, name, user_email, description, image_path, status) 
@@ -410,24 +431,30 @@ def report_action():
                 user['name'],
                 user['email'],
                 f"{action_type}: {description}",
-                s3_url  # Guardamos la URL completa de S3
+                s3_url
             )
         )
         conn.commit()
+        print("Successfully saved to database")  # Debug
         
         return jsonify({
             'success': True,
             'message': 'Acción reportada con éxito. Se verificará pronto.',
-            'image_url': s3_url  # Opcional: devolver la URL para el frontend
+            'image_url': s3_url
         })
         
     except mysql.connector.Error as e:
+        print(f"Database error: {str(e)}")  # Debug
         return jsonify({'error': f'Error de base de datos: {str(e)}'}), 500
     except Exception as e:
+        print(f"Unexpected error: {str(e)}")  # Debug
         return jsonify({'error': f'Error inesperado: {str(e)}'}), 500
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+        print("Report action process completed")  # Debug
     
 @app.route('/get_image/<filename>')
 def get_image(filename):
