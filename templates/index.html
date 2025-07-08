@@ -28,9 +28,20 @@
                 <input type="text" placeholder="Buscar" id="search-bar">
                 <i class="fas fa-search search-icon" style="color: #c4c7c5;"></i>
             </div>
+
+            <!-- Agrega esta sección de perfil de usuario al principio -->
+            <div id="user-profile-sidebar">
+                <img src="/static/images/Pford_2.jpg" alt="User Photo" id="sidebar-user-photo"
+                    class="sidebar-user-photo">
+                <div id="sidebar-user-name" class="sidebar-user-name"></div> <!-- Nueva línea para el nombre -->
+                <div id="sidebar-login-text" class="sidebar-login-text">Iniciar sesión</div>
+                <div id="sidebar-user-info" class="sidebar-user-info hidden">
+                    <div id="sidebar-user-email"></div>
+                    <div id="sidebar-user-credits"></div>
+                </div>
+            </div>
+
             <div id="menu">
-                <button>Datos Locales</button>
-                <button>Capas del Mapa</button>
                 <button>Tabla de Posiciones</button>
                 <button>Ayuda</button>
                 <button onclick="showIntroductionBox()">Introducción</button>
@@ -58,67 +69,176 @@
                     <p id="popup-user-credits" class="popup-text"></p>
                 </div>
 
-                <!-- Agrega este popup justo después del popup de user-credit-popup: -->
-                <div id="redeem-popup" class="pford-popup hidden">
-                    <div class="popup-header">
+                <!-- Acciones Pop-up Box (Initially Hidden) -->
+                <div id="actions-popup" class="actions-popup hidden" style="display: none;">
+                    <div class="actions-header">
                         <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
-                        <span class="popup-title">Canjear Acciones Ecológicas</span>
-                        <button class="close-button" onclick="closeRedeemPopup()">&times;</button>
+                        <span class="actions-title">Eco-Acciones</span>
+                        <button class="close-button" onclick="closeActionsPopup()">&times;</button>
                     </div>
                     <div class="popup-divider"></div>
-                    <p class="popup-text">
-                        Sube evidencia de tu acción ecológica para canjear tus créditos.
-                        Asegúrate que la imagen sea clara y muestre tu contribución ambiental.
-                    </p>
-                    <div class="input-container">
-                        <label for="action-description">Descripción breve:</label>
-                        <input type="text" id="action-description" placeholder="Ej: Planté 5 árboles en el parque">
-                    </div>
-                    <div class="input-container">
-                        <label for="action-image">Subir imagen:</label>
-                        <input type="file" id="action-image" accept="image/*">
-                    </div>
-                    <div class="popup-divider"></div>
-                    <button class="accept-button" onclick="submitRedeemAction()">Enviar Evidencia</button>
-                    <div id="redeem-success" style="display: none; text-align: center; margin-top: 15px;">
-                        <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 50px;"></i>
-                        <p style="color: white; margin-top: 10px;">¡Evidencia enviada con éxito!</p>
+                    <div class="actions-table-container">
+                        <table class="actions-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Acción sustentable</th>
+                                    <th>Evidencia requerida</th>
+                                    <th>Créditos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>♻️ Reciclaje visible</td>
+                                    <td>Depositar PET/latas en los contenedores correctos</td>
+                                    <td>Foto del depósito en el contenedor</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Llevar papel usado al contenedor de reciclaje</td>
+                                    <td>Foto del depósito con papel</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Separar residuos correctamente en estaciones de separación</td>
+                                    <td>Foto del uso correcto</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Llevar botellas o tapas a centros de acopio de la UNAQ</td>
+                                    <td>Foto entregando material</td>
+                                    <td>🟢 15 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>🧴 Reducción de plásticos</td>
+                                    <td>Usar termo personal en vez de botella desechable</td>
+                                    <td>Foto del termo en uso</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Llevar alimentos en recipientes reutilizables</td>
+                                    <td>Foto del recipiente</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>🧽 Limpieza y orden</td>
+                                    <td>Recoger basura en salones o áreas comunes (mínimo 5 piezas)</td>
+                                    <td>Foto antes y después</td>
+                                    <td>🟢 15 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Limpiar mesas o bancos con material ecológico</td>
+                                    <td>Foto del material y área limpia</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>📢 Educación ecológica</td>
+                                    <td>Asistir a plática/taller ecológico organizado por la escuela</td>
+                                    <td>Foto del evento o captura de registro</td>
+                                    <td>🟢 20 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Colocar cartel ecológico informativo en la escuela</td>
+                                    <td>Foto del cartel en muro o pizarrón</td>
+                                    <td>🟢 15 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>🧠 Creatividad verde</td>
+                                    <td>Diseñar y presentar una infografía ecológica para difundir</td>
+                                    <td>Foto del diseño pegado o compartido</td>
+                                    <td>🟢 20 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Participar en un concurso o actividad ecológica institucional</td>
+                                    <td>Foto del momento o diploma</td>
+                                    <td>🟢 25 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>🗑️ Mantenimiento ecológico</td>
+                                    <td>Reportar contenedor lleno o mal uso del reciclaje</td>
+                                    <td>Foto clara del incidente</td>
+                                    <td>🟢 5 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td>🌳 Acción ecológica directa</td>
+                                    <td>Regar plantas de áreas verdes comunes (solo con permiso)</td>
+                                    <td>Foto con regadera y zona regada</td>
+                                    <td>🟢 10 créditos</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Cuidar o limpiar una zona verde de la escuela</td>
+                                    <td>Foto antes y después</td>
+                                    <td>🟢 15 créditos</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Popup para Report Actions -->
-                <div id="report-popup" class="pford-popup hidden">
-                    <div class="popup-header">
+                <!-- Report Actions Pop-up Box (Initially Hidden) -->
+                <div id="report-popup" class="actions-popup hidden">
+                    <div class="actions-header">
                         <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
-                        <span class="popup-title">Reportar Acción Ecológica</span>
+                        <span class="actions-title">Reportar Acción Ecológica</span>
                         <button class="close-button" onclick="closeReportPopup()">&times;</button>
                     </div>
                     <div class="popup-divider"></div>
-                    <p class="popup-text">
-                        Reporta una acción ecológica que hayas realizado para validación.
-                        Debes estar logeado para reportar acciones.
-                    </p>
-                    <div id="report-login-message"
-                        style="text-align: center; color: #ff4757; margin: 15px 0; display: none;">
-                        Debes iniciar sesión para reportar acciones
-                    </div>
-                    <div id="report-form" style="display: none;">
-                        <div class="input-container">
-                            <label for="report-description">Descripción:</label>
-                            <input type="text" id="report-description" placeholder="Ej: Recogí 5 kg de basura">
+
+                    <div class="input-container" style="padding: 20px;">
+                        <label for="action-type">Tipo de acción:</label>
+                        <select id="action-type" class="actions-select">
+                            <option value="">Selecciona una acción</option>
+                            <option value="reciclaje_pet">♻️ Reciclaje visible (PET/latas) - 10 créditos</option>
+                            <option value="reciclaje_papel">♻️ Reciclaje visible (Papel) - 10 créditos</option>
+                            <option value="separacion_residuos">♻️ Separación de residuos - 10 créditos</option>
+                            <option value="centro_acopio">♻️ Centro de acopio UNAQ - 15 créditos</option>
+                            <option value="reduccion_termo">🧴 Reducción de plásticos (Termo) - 10 créditos</option>
+                            <option value="reduccion_recipientes">🧴 Reducción de plásticos (Recipientes) - 10 créditos
+                            </option>
+                            <option value="limpieza_basura">🧽 Limpieza (Recoger basura) - 15 créditos</option>
+                            <option value="limpieza_mesas">🧽 Limpieza (Mesas/bancos) - 10 créditos</option>
+                            <option value="platica_ecologica">📢 Educación ecológica (Plática/taller) - 20 créditos
+                            </option>
+                            <option value="cartel_ecologico">📢 Educación ecológica (Cartel) - 15 créditos</option>
+                            <option value="infografia">🧠 Creatividad verde (Infografía) - 20 créditos</option>
+                            <option value="concurso_ecologico">🧠 Creatividad verde (Concurso) - 25 créditos</option>
+                            <option value="reporte_contenedor">🗑️ Reporte de contenedor - 5 créditos</option>
+                            <option value="riego_plantas">🌳 Riego de plantas - 10 créditos</option>
+                            <option value="limpieza_verde">🌳 Limpieza zona verde - 15 créditos</option>
+                            <option value="otro">Otro (Especificar abajo)</option>
+                        </select>
+
+                        <div id="other-action-container" class="hidden" style="margin-top: 15px;">
+                            <label for="other-action">Describe tu acción:</label>
+                            <textarea id="other-action" rows="3" style="width: 100%; padding: 8px;"></textarea>
+                            <p style="font-size: 12px; color: #aaa;">Créditos pendientes de aprobación</p>
                         </div>
-                        <div class="input-container">
-                            <label for="report-image">Evidencia (imagen):</label>
-                            <input type="file" id="report-image" accept="image/*">
+
+                        <div style="margin-top: 15px;">
+                            <label for="report-image">Sube una foto como evidencia:</label>
+                            <input type="file" id="report-image" accept="image/*" style="margin-top: 5px;">
                         </div>
-                        <div class="popup-divider"></div>
-                        <button class="accept-button" onclick="submitReportAction()">Enviar Reporte</button>
+
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button class="actions-table-button" onclick="submitReportAction()" style="width: 100%;">
+                                Enviar Reporte
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <button id="report-actions-btn">Reporta</button>
-                <button id="redeem-actions-btn">Canjea</button>
+                <button id="actions-btn">Eco-Acciones</button>
                 <button id="toggle-live-data">CO₂ Global</button>
+                <!-- Busca el botón de reportar en tu HTML y reemplázalo con este: -->
+                <button id="report-actions-btn">Iniciar sesión</button>
 
                 <!-- Pford Credits Button with Clickable Pop-up -->
                 <div id="pford-credits-container">
@@ -131,9 +251,9 @@
                         </div>
                         <div class="popup-divider"></div>
                         <p class="popup-text">
-                            Los Pford Credits son recompensas que puedes ganar al realizar acciones ecológicas. Estos
-                            créditos pueden canjearse por beneficios como transporte público gratuito, descuentos e
-                            incentivos ambientales. ¡Únete al movimiento y empieza a ganar hoy mismo!
+                            Los Pford Credits son tu recompensa por acciones ecológicas en el campus.
+                            Acumúlalos y descubre los beneficios disponibles para ti.
+                            ¡Cada acción cuenta para un futuro más sostenible!
                         </p>
                         <div class="popup-divider"></div>
                         <button class="signup-button">Registrarse</button>
@@ -141,13 +261,6 @@
                         <!-- New Login Section -->
                         <p class="login-text-small">¿Ya tienes una cuenta?</p>
                         <p class="login-link"><a href="#" onclick="showLogin()">Iniciar sesión</a></p>
-                    </div>
-                </div>
-                <div id="user-menu" style="display: none;">
-                    <span id="user-email-display" style="color: white; margin-right: 15px;"></span>
-                    <button id="logout-btn" style="background-color: #ff4757;">Cerrar sesión</button>
-                    <div id="mobile-menu-toggle" class="mobile-only">
-                        <i class="fas fa-ellipsis-v"></i>
                     </div>
                 </div>
             </div>
@@ -159,11 +272,8 @@
                 </div>
                 <div class="divider"></div>
                 <p class="introduction-text">
-                    Esta plataforma está diseñada para medir tu impacto ambiental, promover acciones ecológicas y
-                    recompensar tu compromiso sostenible.
-
-                    ¡Mejor que contártelo, preferimos mostrártelo! Mira este video para descubrir cómo funciona Pford
-                    Credits y cómo puedes unirte al cambio.
+                    Únete al programa de sostenibilidad UNAQ: mide tus acciones ecológicas, gana recompensas y ayuda al
+                    campus. Conoce el sistema en este video:
                 </p>
                 <div class="divider"></div>
 
@@ -181,7 +291,7 @@
             <!-- About the Creator Pop-up Box (Initially Hidden) -->
             <div id="about-box" class="about-popup hidden">
                 <div class="about-header">
-                    <img src="/static/images/IMG_3307.jpg" alt="Jorge" class="about-photo">
+                    <img src="/static/images/LinkedIn_BW.jpg" alt="Jorge" class="about-photo">
                     <span class="about-title">Sobre el Creador</span>
                     <button class="close-button" onclick="closeAboutBox()">&times;</button>
                 </div>
@@ -194,7 +304,7 @@
                 </p>
                 <div class="divider"></div>
                 <!-- Botón de Contacto -->
-                <a href="mailto:jorgecf29@hotmail.com?subject=Collaboration Request&body=Hi Jorge, I'd like to collaborate with you!"
+                <a href="mailto:jorgemllr@outlook.com?subject=Collaboration Request&body=Hi Jorge, I'd like to collaborate with you!"
                     class="contact-button">
                     Contáctame
                 </a>
@@ -214,7 +324,7 @@
                 <button class="accept-button" onclick="closeAuthPopup()">Continuar</button>
             </div>
 
-            <section id="container-2">
+            <section id="container-2" style="display: none;">
                 <h3>Emisiones Globales de Gases de Efecto Invernadero (1958 - 2024)</h3>
             </section>
 
@@ -224,7 +334,7 @@
                 </div>
             </section>
 
-            <section id="year-selection">
+            <section id="year-selection" style="display: none;">
                 <label for="year-select">Selecciona el año para visualizar concentraciones de CO₂ en el mundo</label>
                 <select id="year-select">
                     <option value="">Selecciona un año</option>
@@ -249,6 +359,11 @@
                     esfuerzos por el planeta merecen créditos!
                 </p>
                 <div class="divider"></div>
+                <div class="input-container">
+                    <label for="user-name">Nombre completo</label>
+                    <input type="text" id="user-name" placeholder="Ingresa tu nombre completo">
+                </div>
+
                 <div class="input-container">
                     <label for="institutional-email">Correo institucional</label>
                     <input type="email" id="institutional-email" placeholder="ejemplo@soyunaq.mx">
@@ -294,13 +409,13 @@
                 <div class="divider"></div>
                 <div class="input-container">
                     <label for="login-email">Correo institucional</label>
-                    <input type="email" id="login-email" placeholder="example@soyunaq.mx">
+                    <input type="email" id="login-email" placeholder="ejemplo@soyunaq.mx">
                 </div>
 
                 <div class="input-container">
                     <label for="login-password">Contraseña</label>
                     <div class="password-wrapper">
-                        <input type="password" id="login-password" placeholder="Enter your password">
+                        <input type="password" id="login-password" placeholder="Ingresa tu contraseña">
                         <i class="fas fa-eye" id="toggle-login-password"
                             onclick="togglePassword('login-password', 'toggle-login-password')"></i>
                     </div>
@@ -314,19 +429,32 @@
                 <p class="signup-link"><a href="#" onclick="showSignup()">Regístrate aquí</a></p>
             </div>
 
-            <header id="header">
+            <!-- <header id="header">
                 <div id="location-info">
                     <p>Camera: 35 km | Lat: <span id="lat">20.5831</span> | Lon: <span id="lon">-100.4267</span></p>
                 </div>
-            </header>
+            </header> -->
 
-            <section id="info-above-map">
+            <!-- <section id="info-above-map">
                 <h3>Tu impacto climático local</h3>
                 <p>Descubre cómo el cambio climático afecta tu región</p>
-            </section>
+            </section> -->
 
             <section id="map-container">
+                <div id="map-header">
+                    <h3>Tu impacto climático local</h3>
+                    <p>Descubre cómo el cambio climático afecta tu región</p>
+                </div>
                 <div id="map"></div>
+                <!-- Nuevo contenedor para el control de cámara -->
+                <div id="camera-control">
+                    <button id="toggle-camera-info">
+                        <i class="fas fa-chevron-down"></i> Información de Cámara
+                    </button>
+                    <div id="camera-info" class="hidden">
+                        <p>Camera: 35 km | Lat: <span id="lat">20.5831</span> | Lon: <span id="lon">-100.4267</span></p>
+                    </div>
+                </div>
             </section>
 
             <section id="info-below-map">
@@ -368,12 +496,16 @@
             const creditsButton = document.getElementById("pford-credits-button");
             const popup = document.getElementById("pford-credits-box");
 
-            // Toggle pop-up visibility on button click
-            creditsButton.addEventListener("click", () => {
-                popup.style.display = (popup.style.display === "block") ? "none" : "block";
+            // Evento modificado para el botón dual (Registrarse/Cerrar sesión)
+            creditsButton.addEventListener("click", function (e) {
+                if (creditsButton.textContent === "Registrarse") {
+                    e.stopPropagation();
+                    popup.style.display = (popup.style.display === "block") ? "none" : "block";
+                }
+                // Si dice "Cerrar sesión", el onclick asignado en updateUIForLoggedInUser manejará el logout
             });
 
-            // Close pop-up if clicking outside
+            // Mantén este cierre del popup al hacer clic fuera
             document.addEventListener("click", (event) => {
                 if (!creditsButton.contains(event.target) && !popup.contains(event.target)) {
                     popup.style.display = "none";
@@ -393,14 +525,102 @@
     </script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Configurar el evento de clic para el botón de login en el sidebar
+            const sidebarLoginBtn = document.getElementById("sidebar-login-text");
+            if (sidebarLoginBtn) {
+                sidebarLoginBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    showLogin();
+                });
+            }
+
+            // También puedes hacer que toda el área del perfil de usuario sea clickeable
+            const userProfileSidebar = document.getElementById("user-profile-sidebar");
+            if (userProfileSidebar) {
+                userProfileSidebar.addEventListener("click", function () {
+                    // Verificar si el usuario no está logueado
+                    fetch('/check_session')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.logged_in) {
+                                showLogin();
+                            }
+                        });
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Reemplaza el código actual con este:
+        function showActionsPopup() {
+            document.getElementById("actions-popup").style.display = "flex"; // Usamos flex para mantener el layout
+            document.getElementById("actions-popup").classList.remove("hidden");
+        }
+
+        function closeActionsPopup() {
+            document.getElementById("actions-popup").style.display = "none";
+            document.getElementById("actions-popup").classList.add("hidden");
+        }
+
+        // Cerrar al hacer clic fuera - versión mejorada
+        document.addEventListener('click', function (event) {
+            const actionsPopup = document.getElementById("actions-popup");
+            const actionsBtn = document.getElementById("actions-btn");
+
+            if (actionsPopup && !actionsPopup.contains(event.target)) {
+                // Si el clic fue fuera del popup y no en el botón de acciones
+                if (actionsBtn && !actionsBtn.contains(event.target)) {
+                    closeActionsPopup();
+                }
+            }
+        });
+
+        // Asignar evento al botón de acciones
+        document.getElementById("actions-btn")?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const popup = document.getElementById("actions-popup");
+            if (popup.style.display === "none" || popup.classList.contains("hidden")) {
+                showActionsPopup();
+            } else {
+                closeActionsPopup();
+            }
+        });
+    </script>
+
+    <script>
+        // Agrega esto al final de tu archivo JavaScript existente
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('toggle-camera-info');
+            const cameraControl = document.getElementById('camera-control');
+            const cameraInfo = document.getElementById('camera-info');
+
+            toggleButton.addEventListener('click', function () {
+                cameraControl.classList.toggle('active');
+                cameraInfo.classList.toggle('hidden');
+            });
+        });
+    </script>
+
+    <script>
         // Funciones para mostrar/ocultar popups
+        // En la función showLogin()
         function showLogin() {
+            // Cerrar otros popups abiertos
+            document.getElementById("pford-credits-box").style.display = "none";
             document.getElementById("signup-box").classList.add("hidden");
+            document.getElementById("report-popup").classList.add("hidden");
+
+            // Mostrar el popup de login
             document.getElementById("login-box").classList.remove("hidden");
         }
 
         function showSignup() {
+            // Cierra cualquier popup abierto
+            document.getElementById("pford-credits-box").style.display = "none";
             document.getElementById("login-box").classList.add("hidden");
+            // Abre el popup de registro
             document.getElementById("signup-box").classList.remove("hidden");
         }
 
@@ -416,14 +636,22 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Botón Sign Up en el menú principal
             document.getElementById("pford-credits-button").addEventListener("click", function (e) {
-                e.stopPropagation(); // solo previene que se cierre el popup por clic externo
+                e.stopPropagation();
+                // Solo muestra el primer popup
+                document.getElementById("pford-credits-box").style.display = "block";
+                // Asegúrate de que los otros popups estén cerrados
+                document.getElementById("signup-box").classList.add("hidden");
+                document.getElementById("login-box").classList.add("hidden");
             });
 
             // Botón Sign Up dentro del popup de créditos
             document.querySelectorAll('.signup-button').forEach(button => {
                 button.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    showSignup();
+                    // Cierra el primer popup
+                    document.getElementById("pford-credits-box").style.display = "none";
+                    // Abre el segundo popup
+                    document.getElementById("signup-box").classList.remove("hidden");
                 });
             });
 
@@ -464,6 +692,12 @@
             const email = document.getElementById("institutional-email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
+            const name = document.getElementById("user-name").value; // Nuevo campo
+
+            if (!name) {
+                showAuthPopup('Error', 'Por favor ingresa tu nombre completo', true);
+                return;
+            }
 
             if (!email.endsWith('@soyunaq.mx')) {
                 showAuthPopup('Error', 'Solo se permiten correos institucionales @soyunaq.mx', true);
@@ -484,7 +718,7 @@
                 const response = await fetch('/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, name }) // Incluir el nombre
                 });
 
                 const data = await response.json();
@@ -492,7 +726,7 @@
                 if (data.error) {
                     showAuthPopup('Error', data.error, true);
                 } else {
-                    showAuthPopup('¡Éxito!', `Bienvenido ${data.user.email}. Has ganado 10 créditos iniciales.`, false);
+                    showAuthPopup('¡Éxito!', `Bienvenido ${name}. Has ganado 10 créditos iniciales.`, false);
                     updateUIForLoggedInUser(data.user);
                     closeSignupBox();
                 }
@@ -522,7 +756,10 @@
                 if (data.error) {
                     showAuthPopup('Error', data.error, true);
                 } else {
-                    showAuthPopup('¡Bienvenido!', `Hola ${data.user.email}. Tienes ${data.user.credits} créditos.`, false);
+                    // Extraer solo el primer nombre del nombre completo
+                    const firstName = data.user.name ? data.user.name.split(' ')[0] : data.user.email.split('@')[0];
+
+                    showAuthPopup('¡Bienvenido!', `Hola ${firstName}. Tienes ${data.user.credits} créditos.`, false);
                     updateUIForLoggedInUser(data.user);
                     closeLoginBox();
                 }
@@ -575,12 +812,21 @@
                 .then(data => {
                     if (data.logged_in && data.user) {
                         updateUIForLoggedInUser(data.user);
+                        updateReportButton(true);
+                    } else {
+                        updateReportButton(false);
                     }
                 })
                 .catch(error => console.error('Error verificando sesión:', error));
         }
 
         function showAuthPopup(title, message, isError) {
+            // Cerrar otros popups abiertos
+            document.querySelectorAll('.pford-popup:not(.hidden), .disclaimer-box:not(.hidden)').forEach(popup => {
+                popup.classList.add('hidden');
+            });
+
+            // Mostrar el popup de autenticación
             document.getElementById("auth-success-popup").classList.remove("hidden");
             document.querySelector("#auth-success-popup .intro-title").textContent = title;
             document.getElementById("auth-message").textContent = message;
@@ -596,83 +842,238 @@
             document.getElementById("auth-success-popup").classList.add("hidden");
         }
 
-        function updateUIForLoggedInUser(user) {
-            // Mostrar información del usuario
-            const userMenu = document.getElementById("user-menu");
-            const creditsButton = document.getElementById("pford-credits-button");
+        // Función para actualizar el estado del botón de reportar
+        function updateReportButton(isLoggedIn) {
+            const reportBtn = document.getElementById("report-actions-btn");
+            if (reportBtn) {
+                // Crear un nuevo botón para reemplazar el existente
+                const newBtn = document.createElement("button");
+                newBtn.id = "report-actions-btn";
 
-            if (userMenu && creditsButton) {
-                userMenu.style.display = "block";
-                creditsButton.style.display = "none";
-                document.getElementById("user-email-display").textContent = user.email;
-
-                // Actualizar créditos en el popup del logo
-                if (document.getElementById("popup-user-email")) {
-                    document.getElementById("popup-user-email").textContent = `Correo: ${user.email}`;
-                    document.getElementById("popup-user-credits").textContent = `Créditos: ${user.credits}`;
+                if (isLoggedIn) {
+                    newBtn.textContent = "Reportar";
+                    newBtn.style.backgroundColor = "purple";
+                    newBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        document.getElementById("report-popup").style.display = "flex";
+                        document.getElementById("report-popup").classList.add("active");
+                        document.getElementById("report-popup").classList.remove("hidden");
+                    });
+                } else {
+                    newBtn.textContent = "Iniciar sesión";
+                    newBtn.style.backgroundColor = "purple";
+                    newBtn.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showLogin(); // Esta función debe estar definida correctamente
+                    });
                 }
-            }
 
-            // Actualizar el botón de créditos si existe
-            const pfordCreditsBtn = document.getElementById("pford-credits-button");
-            if (pfordCreditsBtn) {
-                pfordCreditsBtn.textContent = `${user.credits} Créditos`;
+                // Reemplazar el botón antiguo con el nuevo
+                reportBtn.parentNode.replaceChild(newBtn, reportBtn);
             }
         }
+
+        // Actualiza la función updateUIForLoggedInUser existente
+        function updateUIForLoggedInUser(user) {
+            const creditsButton = document.getElementById("pford-credits-button");
+            const firstName = user.name.split(' ')[0]; // Obtener solo el primer nombre
+
+            if (creditsButton) {
+                creditsButton.textContent = "Cerrar sesión";
+                creditsButton.style.backgroundColor = "#ff4757";
+                creditsButton.onclick = function () {
+                    fetch('/logout')
+                        .then(response => response.json())
+                        .then(data => {
+                            showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
+                            updateReportButton(false); // Actualizar el botón de reportar
+                            // Resto del código existente...
+                            const sidebarLoginText = document.getElementById("sidebar-login-text");
+                            const sidebarUserInfo = document.getElementById("sidebar-user-info");
+                            const sidebarUserName = document.getElementById("sidebar-user-name");
+
+                            if (sidebarLoginText && sidebarUserInfo && sidebarUserName) {
+                                sidebarLoginText.classList.remove("hidden");
+                                sidebarUserInfo.classList.add("hidden");
+                                sidebarUserName.style.display = "none";
+                            }
+
+                            creditsButton.textContent = "Registrarse";
+                            creditsButton.style.backgroundColor = "purple";
+                            creditsButton.onclick = null;
+
+                            creditsButton.addEventListener("click", function (e) {
+                                e.stopPropagation();
+                                document.getElementById("pford-credits-box").style.display = "block";
+                            });
+
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        })
+                        .catch(error => {
+                            showAuthPopup('Error', 'No se pudo cerrar la sesión', true);
+                        });
+                };
+            }
+
+            // Actualizar información en el sidebar
+            const sidebarPhoto = document.getElementById("sidebar-user-photo");
+            const sidebarLoginText = document.getElementById("sidebar-login-text");
+            const sidebarUserInfo = document.getElementById("sidebar-user-info");
+            const sidebarUserName = document.getElementById("sidebar-user-name");
+            const sidebarUserEmail = document.getElementById("sidebar-user-email");
+            const sidebarUserCredits = document.getElementById("sidebar-user-credits");
+
+            if (sidebarPhoto && sidebarLoginText && sidebarUserInfo && sidebarUserName) {
+                sidebarLoginText.classList.add("hidden");
+                sidebarUserInfo.classList.remove("hidden");
+                sidebarUserName.textContent = firstName;
+                sidebarUserName.style.display = "block";
+                sidebarUserEmail.textContent = user.email;
+                sidebarUserCredits.textContent = `${user.credits} Créditos`;
+            }
+
+            // Actualizar el botón de reportar
+            updateReportButton(true);
+        }
+
+        // Configurar el evento de clic para el botón de reportar
+        document.addEventListener("DOMContentLoaded", function () {
+            checkSession();
+
+            const reportBtn = document.getElementById("report-actions-btn");
+            if (reportBtn) {
+                reportBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    // El comportamiento se manejará en updateReportButton
+                });
+            }
+        });
 
         document.getElementById("logout-btn")?.addEventListener("click", function () {
             fetch('/logout')
                 .then(response => response.json())
                 .then(data => {
                     showAuthPopup('Sesión cerrada', 'Has cerrado sesión exitosamente', false);
-                    document.getElementById("user-menu").style.display = "none";
-                    document.getElementById("pford-credits-button").style.display = "block";
-                    document.getElementById("pford-credits-button").textContent = "Sign upss";
 
+                    // Actualizar botón de reportar
+                    updateReportButton(false);
+
+                    // Restablecer el sidebar
+                    const sidebarLoginText = document.getElementById("sidebar-login-text");
+                    const sidebarUserInfo = document.getElementById("sidebar-user-info");
+                    const sidebarUserName = document.getElementById("sidebar-user-name");
+
+                    if (sidebarLoginText && sidebarUserInfo && sidebarUserName) {
+                        sidebarLoginText.classList.remove("hidden");
+                        sidebarUserInfo.classList.add("hidden");
+                        sidebarUserName.style.display = "none";
+                    }
+
+                    // Restablecer botón de créditos
+                    const creditsButton = document.getElementById("pford-credits-button");
+                    if (creditsButton) {
+                        creditsButton.textContent = "Registrarse";
+                        creditsButton.style.backgroundColor = "purple";
+                        creditsButton.onclick = function (e) {
+                            e.stopPropagation();
+                            document.getElementById("pford-credits-box").style.display = "block";
+                        };
+                    }
+
+                    // Opción 1: Recargar la página después de 1.5 segundos
                     setTimeout(() => {
                         window.location.reload();
                     }, 1500);
+
+                    /* 
+                    // Opción 2: Actualizar UI sin recargar (más fluido)
+                    // Si prefieres no recargar la página, puedes usar esto en lugar del setTimeout:
+                    checkSession(); // Vuelve a verificar el estado de la sesión
+                    */
                 })
                 .catch(error => {
                     showAuthPopup('Error', 'No se pudo cerrar la sesión', true);
+                    console.error('Logout error:', error);
                 });
         });
 
         // Verificar sesión al cargar la página
         checkSession();
+
+        // Agrega esto al final de tu JavaScript
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebarProfile = document.getElementById("user-profile-sidebar");
+
+            if (sidebarProfile) {
+                sidebarProfile.addEventListener("click", function () {
+                    // Verificar si el usuario está logueado
+                    fetch('/check_session')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.logged_in) {
+                                // Si está logueado, no hacer nada o podrías mostrar un popup de perfil
+                            } else {
+                                // Si no está logueado, mostrar el popup de login
+                                showLogin();
+                            }
+                        });
+                });
+            }
+        });
     </script>
 
     <script>
+        // Función para cerrar todos los popups del sidebar
+        function closeAllSidebarPopups() {
+            document.getElementById("introduction-box").classList.add("hidden");
+            document.getElementById("about-box").classList.add("hidden");
+        }
+
+        // Función para mostrar introducción
+        function showIntroductionBox() {
+            closeAllSidebarPopups(); // Cierra otros popups primero
+            document.getElementById("introduction-box").classList.remove("hidden");
+        }
+
+        // Función para cerrar introducción
+        function closeIntroductionBox() {
+            document.getElementById("introduction-box").classList.add("hidden");
+        }
+
+        // Función para mostrar 'Sobre el creador'
         function showAboutBox() {
+            closeAllSidebarPopups(); // Cierra otros popups primero
             document.getElementById("about-box").classList.remove("hidden");
         }
 
+        // Función para cerrar 'Sobre el creador'
         function closeAboutBox() {
             document.getElementById("about-box").classList.add("hidden");
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector("#menu button:nth-child(6)").addEventListener("click", function () {
-                showAboutBox();
-            });
-        });
+            // Asignar eventos a los botones del menú
+            document.querySelector("#menu button:nth-child(5)").addEventListener("click", showIntroductionBox);
+            document.querySelector("#menu button:nth-child(6)").addEventListener("click", showAboutBox);
 
-        // En el evento DOMContentLoaded, agrega esto:
-        document.addEventListener('DOMContentLoaded', function () {
+            // Ajustes del menú superior
             const topMenu = document.getElementById('top-menu');
             topMenu.style.width = '100%';
             topMenu.style.left = '0';
+
+            // Cerrar popups al hacer clic fuera (opcional)
+            document.addEventListener('click', function (event) {
+                if (!event.target.closest('#menu button') &&
+                    !event.target.closest('.introduction-popup') &&
+                    !event.target.closest('.about-popup')) {
+                    closeAllSidebarPopups();
+                }
+            });
         });
-    </script>
-
-    <script>
-        function showIntroductionBox() {
-            document.getElementById("introduction-box").classList.remove("hidden");
-        }
-
-        function closeIntroductionBox() {
-            document.getElementById("introduction-box").classList.add("hidden");
-        }
     </script>
 
     <style>
@@ -746,18 +1147,27 @@
         document.getElementById("toggle-live-data").addEventListener("click", function () {
             var container = document.getElementById("carbon-globe-container");
             var iframe = document.getElementById("carbon-globe");
+            var container2 = document.getElementById("container-2");
+            var yearSelection = document.getElementById("year-selection");
 
             if (container.style.display === "none") {
+                // Mostrar todos los elementos
                 container.style.display = "block";
+                container2.style.display = "block";
+                yearSelection.style.display = "block";
+
                 iframe.src = "{{ url_for('static', filename='CarbonGlobe/CarbonGlobe.html') }}";
 
                 // Ajustar el tamaño del iframe después de cargar
                 setTimeout(() => {
                     iframe.style.width = "100%";
-                    iframe.style.height = "300px"; // Ajusta según la altura del contenedor
-                }, 500); // Espera medio segundo para asegurar la carga correcta
+                    iframe.style.height = "300px";
+                }, 500);
             } else {
+                // Ocultar todos los elementos
                 container.style.display = "none";
+                container2.style.display = "none";
+                yearSelection.style.display = "none";
                 iframe.src = ""; // Detener la animación para liberar memoria
             }
         });
@@ -841,96 +1251,6 @@
     </script>
 
     <script>
-        // Muestra el popup de redeem
-        function showRedeemPopup() {
-            // Verificar si el usuario está logeado
-            fetch('/check_session')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.logged_in) {
-                        document.getElementById("redeem-popup").classList.remove("hidden");
-                        // Resetear el formulario
-                        document.getElementById("action-description").value = "";
-                        document.getElementById("action-image").value = "";
-                        document.getElementById("redeem-success").style.display = "none";
-                    } else {
-                        showAuthPopup('Error', 'Debes iniciar sesión para canjear acciones', true);
-                    }
-                });
-        }
-
-        function closeRedeemPopup() {
-            document.getElementById("redeem-popup").classList.add("hidden");
-        }
-
-        function submitRedeemAction() {
-            const description = document.getElementById("action-description").value;
-            const imageFile = document.getElementById("action-image").files[0];
-
-            if (!description || !imageFile) {
-                showAuthPopup('Error', 'Por favor completa todos los campos', true);
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('description', description);
-            formData.append('image', imageFile);
-
-            fetch('/redeem_action', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Mostrar animación de éxito
-                        document.getElementById("redeem-success").style.display = "block";
-                        // Ocultar después de 3 segundos
-                        setTimeout(() => {
-                            closeRedeemPopup();
-                        }, 3000);
-                    } else {
-                        showAuthPopup('Error', data.error || 'Error al enviar la evidencia', true);
-                    }
-                })
-                .catch(error => {
-                    showAuthPopup('Error', 'Error de conexión', true);
-                });
-        }
-
-        // Agrega el event listener al botón
-        document.getElementById("redeem-actions-btn")?.addEventListener("click", showRedeemPopup);
-    </script>
-
-    <script>
-        // Funciones para Report Actions
-        function showReportPopup() {
-            const popup = document.getElementById("report-popup");
-            const loginMessage = document.getElementById("report-login-message");
-            const reportForm = document.getElementById("report-form");
-
-            // Verificar si el usuario está logeado
-            fetch('/check_session')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.logged_in) {
-                        loginMessage.style.display = "none";
-                        reportForm.style.display = "block";
-                        // Resetear el formulario
-                        document.getElementById("report-description").value = "";
-                        document.getElementById("report-image").value = "";
-                        popup.classList.remove("hidden");
-                    } else {
-                        loginMessage.style.display = "block";
-                        reportForm.style.display = "none";
-                        popup.classList.remove("hidden");
-                        showAuthPopup('Error', 'Debes iniciar sesión para reportar acciones', true);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error verificando sesión:', error);
-                });
-        }
 
         function closeReportPopup() {
             document.getElementById("report-popup").classList.add("hidden");
@@ -973,7 +1293,7 @@
             if (reportBtn) {
                 reportBtn.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    showReportPopup();
+                    showReportPopup(); // Llama a la función actualizada que definimos antes
                 });
             }
         });
@@ -995,6 +1315,125 @@
             document.addEventListener('click', function (e) {
                 if (mobileMenuToggle && !mobileMenuToggle.contains(e.target)) {
                     topMenu.classList.remove('mobile-menu-expanded');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Mostrar/ocultar campo "Otro" cuando se selecciona esa opción
+        document.getElementById("action-type").addEventListener("change", function () {
+            const otherContainer = document.getElementById("other-action-container");
+            if (this.value === "otro") {
+                otherContainer.classList.remove("hidden");
+            } else {
+                otherContainer.classList.add("hidden");
+            }
+        });
+
+        // Cerrar al hacer clic fuera
+        document.addEventListener('click', function (event) {
+            const reportPopup = document.getElementById("report-popup");
+            const reportBtn = document.getElementById("report-actions-btn");
+
+            if (reportPopup && !reportPopup.contains(event.target)) {
+                if (reportBtn && !reportBtn.contains(event.target)) {
+                    closeReportPopup();
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // Función para cerrar el popup de reporte
+        function closeReportPopup() {
+            const reportPopup = document.getElementById("report-popup");
+            reportPopup.classList.remove("active");
+        }
+
+        // Función para enviar el reporte
+        function submitReportAction() {
+            const actionType = document.getElementById("action-type").value;
+            const otherAction = document.getElementById("other-action").value;
+            const imageFile = document.getElementById("report-image").files[0];
+
+            if (!actionType) {
+                showAuthPopup('Error', 'Por favor selecciona un tipo de acción', true);
+                return;
+            }
+
+            if (actionType === "otro" && !otherAction) {
+                showAuthPopup('Error', 'Por favor describe la acción realizada', true);
+                return;
+            }
+
+            if (!imageFile) {
+                showAuthPopup('Error', 'Por favor sube una foto como evidencia', true);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('action_type', actionType);
+            formData.append('description', actionType === "otro" ? otherAction :
+                document.getElementById("action-type").options[document.getElementById("action-type").selectedIndex].text);
+            formData.append('image', imageFile);
+
+            fetch('/report_action', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAuthPopup('Éxito', '¡Acción reportada con éxito! Se verificará pronto.', false);
+                        closeReportPopup();
+
+                        // Actualizar los créditos del usuario si la respuesta los incluye
+                        if (data.user_credits !== undefined) {
+                            updateUserCredits(data.user_credits);
+                        }
+                    } else {
+                        showAuthPopup('Error', data.error || 'Error al enviar el reporte', true);
+                    }
+                })
+                .catch(error => {
+                    showAuthPopup('Error', 'Error de conexión: ' + error.message, true);
+                });
+        }
+
+        // Función auxiliar para actualizar los créditos del usuario en la UI
+        function updateUserCredits(credits) {
+            const creditsElements = [
+                document.getElementById("sidebar-user-credits"),
+                document.getElementById("popup-user-credits")
+            ];
+
+            creditsElements.forEach(el => {
+                if (el) el.textContent = `${credits} Créditos`;
+            });
+        }
+
+        // Asignar el evento al botón de reportar cuando el DOM esté listo
+        document.addEventListener("DOMContentLoaded", function () {
+            // Cerrar al hacer clic fuera
+            document.addEventListener('click', function (event) {
+                const reportPopup = document.getElementById("report-popup");
+                const reportBtn = document.getElementById("report-actions-btn");
+
+                if (reportPopup && !reportPopup.contains(event.target)) {
+                    if (reportBtn && !reportBtn.contains(event.target)) {
+                        closeReportPopup();
+                    }
+                }
+            });
+
+            // Mostrar/ocultar campo "Otro" cuando se selecciona esa opción
+            document.getElementById("action-type").addEventListener("change", function () {
+                const otherContainer = document.getElementById("other-action-container");
+                if (this.value === "otro") {
+                    otherContainer.classList.remove("hidden");
+                } else {
+                    otherContainer.classList.add("hidden");
                 }
             });
         });
