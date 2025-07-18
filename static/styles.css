@@ -135,7 +135,6 @@ body.hidden-content #container {
     border-radius: 100px;
     transition: background-color 0.3s;
     font-size: 14px;
-    /* Tamaño de fuente consistente */
 }
 
 #menu button:hover {
@@ -176,17 +175,24 @@ body.hidden-content #container {
 }
 
 #top-menu button {
-    background-color: purple;
+    background-color: #131314;
     color: #ffffff;
-    border: none;
+    border: 2px solid #ffffff;
+    /* Borde blanco */
     padding: 12px 20px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    /* Transición suave para todos los cambios */
 }
 
 #top-menu button:hover {
-    background-color: rgb(77, 0, 77);
+    background-color: #4d004d;
+    /* Hover púrpura */
+    border-color: #ffccff;
+    /* Borde más claro para el hover */
+    color: #ffccff;
+    /* Texto también cambia ligeramente */
 }
 
 /* Estilo específico para el botón de logout */
@@ -1871,4 +1877,272 @@ input[type="file"] {
     color: white;
     border-radius: 5px;
     border: 1px dashed #444;
+}
+
+/* Agrega esto a tu CSS (por ejemplo, en styles.css o en un <style> dentro del HTML) */
+.top-menu-btn {
+    background-color: #131314;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.top-menu-btn:hover {
+    background-color: #4d004d;
+    border-color: #ffccff;
+    color: #ffccff;
+}
+
+#pford-credits-button {
+    background-color: purple;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+#pford-credits-button:hover {
+    background-color: #5e2d91;
+    /* púrpura más oscuro al pasar el mouse */
+}
+
+/* Leaderboard Styles */
+#leaderboard-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    max-width: 800px;
+    max-height: 80vh;
+    background: rgba(20, 20, 20, 0.98);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0px 0px 20px rgba(128, 0, 128, 0.7);
+    z-index: 10000;
+    color: white;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+}
+
+#leaderboard-popup.active {
+    display: flex;
+}
+
+.leaderboard-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.leaderboard-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+}
+
+.leaderboard-table-container {
+    width: 100%;
+    overflow: auto;
+    margin-top: 15px;
+    flex-grow: 1;
+    padding-right: 5px;
+    max-height: 60vh;
+    /* Altura máxima para el scroll */
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 100%;
+    /* Cambiado de 600px a 100% para móviles */
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-table th {
+    background-color: rgba(128, 0, 128, 0.25);
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(5px);
+}
+
+.leaderboard-table tr:hover {
+    background-color: rgba(184, 153, 137, 0.15);
+}
+
+.leaderboard-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.leaderboard-table tr:nth-child(even):hover {
+    background-color: rgba(128, 0, 128, 0.15);
+}
+
+/* Medal styles */
+.leaderboard-table tr.gold {
+    background: linear-gradient(to right, rgba(212, 175, 55, 0.1), rgba(20, 20, 20, 0.9));
+}
+
+.leaderboard-table tr.gold:hover {
+    background: linear-gradient(to right, rgba(212, 175, 55, 0.2), rgba(20, 20, 20, 0.8));
+}
+
+.leaderboard-table tr.silver {
+    background: linear-gradient(to right, rgba(192, 192, 192, 0.1), rgba(20, 20, 20, 0.9));
+}
+
+.leaderboard-table tr.silver:hover {
+    background: linear-gradient(to right, rgba(192, 192, 192, 0.2), rgba(20, 20, 20, 0.8));
+}
+
+.leaderboard-table tr.bronze {
+    background: linear-gradient(to right, rgba(205, 127, 50, 0.1), rgba(20, 20, 20, 0.9));
+}
+
+.leaderboard-table tr.bronze:hover {
+    background: linear-gradient(to right, rgba(205, 127, 50, 0.2), rgba(20, 20, 20, 0.8));
+}
+
+.leaderboard-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.leaderboard-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid purple;
+    object-fit: cover;
+}
+
+.leaderboard-name {
+    font-weight: 500;
+}
+
+.leaderboard-credits {
+    font-weight: bold;
+    color: #00b894;
+}
+
+.medal {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.gold .medal {
+    color: gold;
+}
+
+.silver .medal {
+    color: silver;
+}
+
+.bronze .medal {
+    color: #cd7f32;
+}
+
+.leaderboard-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.leaderboard-table-container::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 10px;
+}
+
+.leaderboard-table-container::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 128, 0.6);
+    border-radius: 10px;
+}
+
+.leaderboard-table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 32, 240, 0.8);
+}
+
+@media (max-width: 768px) {
+    #leaderboard-popup {
+        width: 95%;
+        padding: 20px 15px;
+        max-height: 80vh;
+    }
+
+    .leaderboard-title {
+        font-size: 20px;
+    }
+
+    .leaderboard-table {
+        font-size: 13px;
+        min-width: 100%;
+        /* Ocupa todo el ancho disponible */
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 10px 12px;
+    }
+
+    .leaderboard-popup .close-button {
+        top: 5px !important;
+        right: 10px !important;
+        font-size: 30px !important;
+    }
+
+    .leaderboard-header {
+        margin-bottom: 8px;
+    }
+
+    .popup-divider {
+        margin: 8px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #leaderboard-popup {
+        max-height: 85vh;
+        padding: 15px 10px;
+    }
+
+    .leaderboard-table {
+        font-size: 12px;
+        min-width: 100%;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 8px 10px;
+    }
+
+    .leaderboard-popup .close-button {
+        top: 5px !important;
+        right: 8px !important;
+        font-size: 24px !important;
+    }
+
+    .leaderboard-header {
+        margin-bottom: 6px;
+    }
+
+    .popup-divider {
+        margin: 6px 0;
+    }
 }
