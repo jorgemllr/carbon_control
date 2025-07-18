@@ -182,6 +182,30 @@
                     </div>
                 </div>
 
+                <!-- Leaderboard Pop-up Box (Initially Hidden) -->
+                <div id="leaderboard-popup" class="actions-popup hidden">
+                    <div class="leaderboard-header">
+                        <img src="/static/images/Pford_2.jpg" alt="Pford Icon" class="pford-icon">
+                        <span class="leaderboard-title">Tabla de Posiciones</span>
+                        <button class="close-button" onclick="closeLeaderboardPopup()">&times;</button>
+                    </div>
+                    <div class="popup-divider"></div>
+                    <div class="leaderboard-table-container">
+                        <table class="leaderboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Posición</th>
+                                    <th>Usuario</th>
+                                    <th>Créditos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <!-- Los usuarios se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Report Actions Pop-up Box (Initially Hidden) -->
                 <div id="report-popup" class="actions-popup hidden">
                     <div class="actions-header">
@@ -891,10 +915,10 @@
                 // Crear un nuevo botón para reemplazar el existente
                 const newBtn = document.createElement("button");
                 newBtn.id = "report-actions-btn";
+                newBtn.className = "top-menu-btn"; // Aplica la clase con estilo
 
                 if (isLoggedIn) {
                     newBtn.textContent = "Reportar";
-                    newBtn.style.backgroundColor = "purple";
                     newBtn.addEventListener("click", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -904,7 +928,6 @@
                     });
                 } else {
                     newBtn.textContent = "Iniciar sesión";
-                    newBtn.style.backgroundColor = "purple";
                     newBtn.addEventListener("click", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -1002,7 +1025,7 @@
             const reportBtn = document.getElementById("report-actions-btn");
             if (reportBtn) {
                 reportBtn.textContent = "Reportar";
-                reportBtn.style.backgroundColor = "purple";
+                reportBtn.className = "top-menu-btn"; // Asegura que tenga los estilos correctos
             }
         }
 
@@ -1539,6 +1562,109 @@
                     otherContainer.classList.remove("hidden");
                 } else {
                     otherContainer.classList.add("hidden");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Funciones para el leaderboard
+        function showLeaderboardPopup() {
+            fetchLeaderboardData();
+            document.getElementById("leaderboard-popup").style.display = "flex";
+            document.getElementById("leaderboard-popup").classList.remove("hidden");
+        }
+
+        function closeLeaderboardPopup() {
+            document.getElementById("leaderboard-popup").style.display = "none";
+            document.getElementById("leaderboard-popup").classList.add("hidden");
+        }
+
+        function fetchLeaderboardData() {
+            // Mostrar loader mientras carga
+            const leaderboardBody = document.getElementById("leaderboard-body");
+            leaderboardBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Cargando...</td></tr>';
+
+            // Cachear la última respuesta para evitar peticiones redundantes
+            if (window.lastLeaderboardFetch && (Date.now() - window.lastLeaderboardFetch.time < 30000)) {
+                renderLeaderboard(window.lastLeaderboardFetch.data);
+                return;
+            }
+
+            // Usar fetch con AbortController para timeout
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3000); // Timeout de 3 segundos
+
+            fetch('/get_leaderboard', { signal: controller.signal })
+                .then(response => {
+                    clearTimeout(timeout);
+                    if (!response.ok) throw new Error('Error en la respuesta');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Cachear la respuesta
+                        window.lastLeaderboardFetch = {
+                            time: Date.now(),
+                            data: data.users
+                        };
+                        renderLeaderboard(data.users);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching leaderboard:', error);
+                    leaderboardBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px; color: #ff4757;">Error al cargar datos</td></tr>';
+                });
+        }
+
+        function renderLeaderboard(users) {
+            const leaderboardBody = document.getElementById("leaderboard-body");
+
+            // Usar DocumentFragment para renderizado más rápido
+            const fragment = document.createDocumentFragment();
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+
+                // Aplicar estilos a los primeros 3 lugares
+                if (index < 3) row.classList.add(['gold', 'silver', 'bronze'][index]);
+
+                row.innerHTML = `
+            <td>${index < 3 ? ['🥇', '🥈', '🥉'][index] + ' ' : ''}#${index + 1}</td>
+            <td class="leaderboard-user">
+                <img src="/static/images/Pford_2.jpg" alt="${user.name}" class="leaderboard-avatar" loading="lazy">
+                <span class="leaderboard-name">${user.name}</span>
+            </td>
+            <td class="leaderboard-credits">${user.credits} Pford Credits</td>
+        `;
+
+                fragment.appendChild(row);
+            });
+
+            leaderboardBody.innerHTML = '';
+            leaderboardBody.appendChild(fragment);
+        }
+
+        // Precargar datos cuando el mouse entra al botón (opcional)
+        document.querySelector("#menu button:first-child").addEventListener('mouseenter', function () {
+            if (!window.lastLeaderboardFetch) {
+                fetchLeaderboardData();
+            }
+        });
+
+        // Asignar evento al botón de Tabla de Posiciones
+        document.addEventListener("DOMContentLoaded", function () {
+            const leaderboardBtn = document.querySelector("#menu button:first-child");
+            if (leaderboardBtn) {
+                leaderboardBtn.addEventListener("click", showLeaderboardPopup);
+            }
+
+            // Cerrar al hacer clic fuera
+            document.addEventListener('click', function (event) {
+                const leaderboardPopup = document.getElementById("leaderboard-popup");
+                if (leaderboardPopup && !leaderboardPopup.contains(event.target) &&
+                    !event.target.matches("#menu button:first-child, #menu button:first-child *")) {
+                    closeLeaderboardPopup();
                 }
             });
         });
