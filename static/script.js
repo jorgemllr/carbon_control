@@ -7,36 +7,6 @@ L.tileLayer('https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=h
     attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
 }).addTo(map);
 
-// Función para obtener la ubicación actual del usuario
-function getCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
-
-            // Centra el mapa en la ubicación actual
-            map.setView([lat, lon], 17);
-
-            // Agrega un marcador en la ubicación actual
-            var marker = L.marker([lat, lon]).addTo(map);
-
-            // Contenido del popup
-            var popupContent = "<b>Current Location</b><br>" +
-                "Your current position: " + lat.toFixed(5) + ", " + lon.toFixed(5) + "<br>" +
-                "This is a notice about your location.";
-
-            marker.bindPopup(popupContent, { minWidth: 200 }).openPopup(); // Ajusta minWidth según sea necesario
-        }, function () {
-            alert("Error al obtener la ubicación. Asegúrate de que la geolocalización esté habilitada.");
-        });
-    } else {
-        alert("La geolocalización no es compatible con este navegador.");
-    }
-}
-
-// Llama a la función para obtener la ubicación al cargar la página
-getCurrentLocation();
-
 // Muestra la latitud y longitud actuales en los menús
 map.on('mousemove', function (e) {
     document.getElementById('lat').textContent = e.latlng.lat.toFixed(5);
@@ -83,8 +53,6 @@ function searchLocation() {
         alert('Por favor, ingresa un término de búsqueda.');
     }
 }
-
-// Resto del código permanece igual...
 
 // Función para mostrar sugerencias
 function showSuggestions(suggestions) {
