@@ -145,28 +145,14 @@ def chatbot_response(prompt, context):
 def home():
     return render_template('index.html')
 
-@app.route('/ask', methods=['POST'])
-@login_required
+@app.route('/ask', methods=['POST'])  # <- Sin @login_required
 def ask():
-    """Handle chatbot queries from the frontend."""
+    """Handle chatbot queries from the frontend (no login or credit cost)."""
     user_input = request.form['user_input']
     context = get_database_context()
     response = chatbot_response(user_input, context)
     
-    # Actualizar créditos del usuario (restar 1 por pregunta)
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("UPDATE pford_users SET credits = credits - 1 WHERE id = %s", (session['user_id'],))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
-        # Actualizar sesión
-        session['user_credits'] -= 1
-    except Exception as e:
-        print(f"Error updating credits: {e}")
-    
+    # Respuesta directa sin tocar créditos
     return jsonify({'response': response})
 
 @app.route('/signup', methods=['POST'])
@@ -295,17 +281,79 @@ def profile():
 
 @app.route('/check_session')
 def check_session():
-    """Check if user is logged in."""
+    """Check if user is logged in and return complete user data."""
     if 'user_id' in session:
-        return jsonify({
-            'logged_in': True,
-            'user': {
-                'id': session['user_id'],
-                'email': session['user_email'],
-                'credits': session['user_credits']
-            }
-        })
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            cursor = conn.cursor(dictionary=True)
+            
+            # Obtener TODOS los datos necesarios del usuario
+            cursor.execute("""
+                SELECT id, email, name, credits 
+                FROM pford_users 
+                WHERE id = %s
+            """, (session['user_id'],))
+            
+            user = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            
+            if user:
+                # Guardar todos los datos en la sesión
+                session['user_email'] = user['email']
+                session['user_credits'] = user['credits']
+                session['user_name'] = user['name']  # <-- Asegurar que el nombre completo está en sesión
+                
+                return jsonify({
+                    'logged_in': True,
+                    'user': {
+                        'id': user['id'],
+                        'email': user['email'],
+                        'name': user['name'],  # Nombre completo garantizado
+                        'credits': user['credits']
+                    }
+                })
+                
+        except Exception as e:
+            print(f"Error checking session: {str(e)}")
+    
     return jsonify({'logged_in': False})
+
+@app.route('/get_leaderboard')
+def get_leaderboard():
+    """Versión optimizada del leaderboard"""
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        
+        # Consulta optimizada - seleccionamos solo los campos necesarios
+        cursor.execute("""
+            SELECT 
+                name, 
+                credits  # No necesitamos email ni otros campos
+            FROM 
+                pford_users 
+            ORDER BY 
+                credits DESC
+            LIMIT 100  # Límite razonable para evitar transferir datos innecesarios
+        """)
+        
+        # Usamos fetchall sin buffer para mayor velocidad
+        users = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'users': users
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/redeem_action', methods=['POST'])
 @login_required
