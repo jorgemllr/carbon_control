@@ -165,10 +165,10 @@ def signup():
 
     if not email or not password or not name:  # Validar que el nombre no esté vacío
         return jsonify({"error": "Todos los campos son requeridos"}), 400
-
-    # Verificar si el correo termina en @soyunaq.mx
-    if not email.endswith('@soyunaq.mx'):
-        return jsonify({"error": "Solo se permiten correos institucionales @soyunaq.mx"}), 400
+    
+    # Verificar si el correo termina en @soyunaq.mx o @unaq.mx
+    if not (email.endswith('@soyunaq.mx') or email.endswith('@unaq.mx')):
+        return jsonify({"error": "Solo se permiten correos institucionales @soyunaq.mx o @unaq.mx"}), 400
 
     # Validar longitud de contraseña
     if len(password) < 8:
