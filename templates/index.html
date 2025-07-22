@@ -25,7 +25,7 @@
     <div id="container">
         <aside id="sidebar" class="sidebar-collapsed"> <!-- Agrega class="sidebar-collapsed" aquí -->
             <div id="search-container">
-                <input type="text" placeholder="Buscar" id="search-bar">
+                <input type="text" placeholder="Buscar ciudad..." id="search-bar">
                 <i class="fas fa-search search-icon" style="color: #c4c7c5;"></i>
             </div>
 
@@ -44,6 +44,7 @@
             <div id="menu">
                 <button>Tabla de Posiciones</button>
                 <button onclick="showIntroductionBox()">Introducción</button>
+                <button onclick="showShareBox()">Comparte y Gana Créditos</button>
                 <button onclick="showAboutBox()">Sobre el Creador</button>
             </div>
             <div id="info">Monitorea tus acciones ecológicas, gana recompensas y ayuda al planeta.</div>
@@ -320,17 +321,36 @@
                     <button class="close-button" onclick="closeAboutBox()">&times;</button>
                 </div>
                 <div class="divider"></div>
-                <p class="about-text">
-                    Soy Jorge, estudiante de Ingeniería Aeronáutica apasionado por desarrollar soluciones tecnológicas
-                    sostenibles. Pford Credits surge de mi visión de combinar innovación y cuidado ambiental,
-                    incentivando acciones ecológicas con recompensas tangibles. ¡Trabajemos juntos por un futuro más
-                    verde!
-                </p>
+                <div class="about-content-container"> <!-- Nuevo contenedor para el scroll -->
+                    <div class="about-text">
+                        <p>Hola, soy Jorge. Estudio Ingeniería Aeronáutica y me apasiona crear soluciones tecnológicas
+                            con impacto ambiental positivo. Pford Credits nació como una forma de combinar mi interés
+                            por la sostenibilidad con mi gusto por automatizar procesos.</p>
+
+                        <p>Fuera del código, me gusta leer —intento terminar al menos un libro por semana— y escuchar
+                            música. Soy fan de Frank Sinatra, Phil Collins, la música clásica… y también del buen rock.
+                        </p>
+
+                        <p>Además del desarrollo web y la inteligencia artificial, me interesan el golf, las artes
+                            marciales y, por alguna razón, tengo debilidad por Ralph Lauren. Hablo siete idiomas; este
+                            año estuve estudiando japonés y ruso, aunque mi favorito sigue siendo el alemán. Si todo
+                            sale bien, pronto empezaré con mandarín.</p>
+
+                        <p>Si quieres saber más sobre mí o conocer otros proyectos en los que he trabajado, puedes
+                            visitar mi portafolio al final de esta sección.</p>
+
+                        <p>Gracias por formar parte de esta iniciativa ecológica.</p>
+                    </div>
+                </div>
                 <div class="divider"></div>
                 <!-- Botón de Contacto -->
                 <a href="mailto:jorgemllr@outlook.com?subject=Collaboration Request&body=Hi Jorge, I'd like to collaborate with you!"
                     class="contact-button">
                     Contáctame
+                </a>
+                <!-- Nuevo Botón de Portafolio -->
+                <a href="https://leeddynamics.meslatt.com/" target="_blank" class="portfolio-button">
+                    Portafolio
                 </a>
             </div>
 
@@ -359,7 +379,8 @@
             </section>
 
             <section id="year-selection" style="display: none;">
-                <label for="year-select">Selecciona el año para visualizar concentraciones de CO₂ en el mundo</label>
+                <label for="year-select">Selecciona el año para visualizar concentraciones de CO₂ en el
+                    mundo</label>
                 <select id="year-select">
                     <option value="">Selecciona un año</option>
                     <script>
@@ -476,7 +497,8 @@
                         <i class="fas fa-chevron-down"></i> Información de Cámara
                     </button>
                     <div id="camera-info" class="hidden">
-                        <p>Camera: 35 km | Lat: <span id="lat">20.5831</span> | Lon: <span id="lon">-100.4267</span></p>
+                        <p>Camera: 35 km | Lat: <span id="lat">20.5831</span> | Lon: <span id="lon">-100.4267</span>
+                        </p>
                     </div>
                 </div>
             </section>
@@ -501,7 +523,11 @@
             <div id="pford-chat-container">
                 <input type="text" placeholder="Ask Pford..." id="pford-chat-input">
                 <button id="pford-chat-button">
-                    <i class="fas fa-paper-plane"></i> <!-- Paper airplane icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
                 </button>
             </div>
 
@@ -743,8 +769,8 @@
                 return;
             }
 
-            if (!email.endsWith('@soyunaq.mx')) {
-                showAuthPopup('Error', 'Solo se permiten correos institucionales @soyunaq.mx', true);
+            if (!email.endsWith('@soyunaq.mx') && !email.endsWith('@unaq.mx')) {
+                showAuthPopup('Error', 'Solo se permiten correos institucionales @soyunaq.mx o @unaq.mx', true);
                 return;
             }
 
@@ -949,7 +975,7 @@
             const creditsButton = document.getElementById("pford-credits-button");
             if (creditsButton) {
                 creditsButton.textContent = "Cerrar sesión";
-                creditsButton.style.backgroundColor = "#ff4757";
+                creditsButton.style.backgroundColor = "#8B0000";
                 creditsButton.onclick = function () {
                     fetch('/logout')
                         .then(response => response.json())
@@ -1635,7 +1661,7 @@
                 <img src="/static/images/Pford_2.jpg" alt="${user.name}" class="leaderboard-avatar" loading="lazy">
                 <span class="leaderboard-name">${user.name}</span>
             </td>
-            <td class="leaderboard-credits">${user.credits} Pford Credits</td>
+            <td class="leaderboard-credits">🟢 ${user.credits} Pford Credits</td>
         `;
 
                 fragment.appendChild(row);
