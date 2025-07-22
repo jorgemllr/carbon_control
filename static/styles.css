@@ -100,27 +100,71 @@ body.hidden-content #container {
 
 #search-container {
     position: relative;
+    width: 100%;
     margin-bottom: 30px;
 }
 
 #search-bar {
     width: 100%;
-    padding: 10px 10px 10px 40px;
-    border: none;
-    border-radius: 100px;
+    padding: 12px 20px 12px 45px;
+    /* Más espacio para el icono */
+    border: 2px solid #3a0ca3;
+    /* Borde morado */
+    border-radius: 30px;
+    /* Bordes más redondeados */
     background-color: #1b1b1c;
     color: white;
     font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(58, 12, 163, 0.2);
+    /* Sombra sutil */
+}
+
+#search-bar:focus {
+    outline: none;
+    border-color: #7209b7;
+    /* Cambia color al enfocar */
+    box-shadow: 0 2px 12px rgba(114, 9, 183, 0.3);
 }
 
 .search-icon {
     position: absolute;
-    left: 15px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: #fff;
-    font-size: 13px;
-    pointer-events: none;
+    color: #c4c7c5;
+    font-size: 16px;
+    z-index: 2;
+    width: 16px;
+    /* Ancho fijo */
+    height: 16px;
+    /* Alto fijo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* Asegura que el spinner ocupe el mismo espacio */
+.fa-spinner {
+    font-size: 16px;
+    /* Mismo tamaño que la lupa */
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg) translateY(-50%);
+    }
+
+    100% {
+        transform: rotate(360deg) translateY(-50%);
+    }
 }
 
 #menu button {
@@ -193,16 +237,6 @@ body.hidden-content #container {
     /* Borde más claro para el hover */
     color: #ffccff;
     /* Texto también cambia ligeramente */
-}
-
-/* Estilo específico para el botón de logout */
-#logout-btn {
-    background-color: #ff4757 !important;
-    /* Rojo para logout */
-}
-
-#logout-btn:hover {
-    background-color: #ff6b81 !important;
 }
 
 main {
@@ -324,21 +358,67 @@ main {
 }
 
 #pford-chat-button {
-    background-color: #004a77;
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    /* Gradiente azul/púrpura */
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 12px 20px;
+    /* Un poco más de padding */
     border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
+    position: relative;
+    overflow: hidden;
 }
 
+/* Efecto hover con animación */
 #pford-chat-button:hover {
-    background-color: rgb(77, 0, 77);
+    background: linear-gradient(135deg, #3a0ca3, #4361ee);
+    /* Invertimos el gradiente */
+    transform: translateY(-2px);
+    /* Efecto de levitación */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    /* Sombra más pronunciada al hover */
 }
 
-#pford-chat-button i {
-    font-size: 16px;
+/* Efecto de "brillo" al hacer hover */
+#pford-chat-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+#pford-chat-button:hover::after {
+    transform: translateX(100%);
+}
+
+/* Icono con efecto sutil */
+#pford-chat-button svg {
+    width: 18px;
+    /* Un poco más grande */
+    height: 18px;
+    stroke: white;
+    stroke-width: 2.5px;
+    transition: transform 0.3s ease;
+}
+
+#pford-chat-button:hover svg {
+    transform: translateX(2px);
+    /* Movimiento sutil al hacer hover */
 }
 
 #container-2 {
@@ -701,7 +781,7 @@ main {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 5px solid #800080;
+    border: 5px solid #ffffff;
     padding: 5px;
     margin-bottom: 15px;
 }
@@ -730,13 +810,31 @@ main {
     display: none;
 }
 
-
-
 .contact-button {
     display: inline-block;
     margin-top: 15px;
     padding: 12px 20px;
-    background-color: purple;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    margin-right: 25px;
+}
+
+.contact-button:hover {
+    background-color: #b9b9b9;
+    transform: scale(1.05);
+}
+
+.portfolio-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: rgb(0, 96, 128);
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -746,8 +844,8 @@ main {
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
-.contact-button:hover {
-    background-color: #a020f0;
+.portfolio-button:hover {
+    background-color: #396783;
     transform: scale(1.05);
 }
 
@@ -796,20 +894,6 @@ main {
     display: flex;
     align-items: center;
     margin-left: auto;
-}
-
-#logout-btn {
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#logout-btn:hover {
-    background-color: #ff6b81;
 }
 
 .user-credits {
@@ -2145,4 +2229,70 @@ input[type="file"] {
     .popup-divider {
         margin: 6px 0;
     }
+}
+
+/* Estilos para el contenedor de contenido con scroll */
+.about-content-container {
+    width: 100%;
+    max-height: 40vh;
+    /* Altura máxima antes de aparecer el scroll */
+    overflow-y: auto;
+    margin: 15px 0;
+    padding-right: 5px;
+    /* Espacio para el scroll */
+}
+
+/* Estilos para la barra de scroll (similares a los de la tabla de eco-acciones) */
+.about-content-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.about-content-container::-webkit-scrollbar-track {
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 10px;
+}
+
+.about-content-container::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+.about-content-container::-webkit-scrollbar-thumb:hover {
+    background: #b9b9b9;
+}
+
+/* Ajustes para el texto dentro del contenedor */
+.about-text {
+    text-align: justify;
+    font-size: 16px;
+    color: #ffffff;
+    line-height: 1.6;
+    padding: 0 10px;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .about-content-container {
+        max-height: 40vh;
+    }
+
+    .about-text {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-content-container {
+        max-height: 35vh;
+    }
+}
+
+.about-text p {
+    margin-bottom: 1em;
+    line-height: 1.6;
 }
