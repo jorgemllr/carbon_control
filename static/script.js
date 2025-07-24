@@ -1,5 +1,5 @@
 // Inicializa el mapa con un zoom predeterminado
-var map = L.map('map').setView([20.588844, -100.389888], 14);
+var map = L.map('map').setView([20.588844, -100.389888], 4);
 
 // Mapa oscuro con toques púrpura (usando Thunderforest)
 L.tileLayer('https://api.maptiler.com/maps/streets-v2-dark/{z}/{x}/{y}.png?key=hAu1zgevGSOfDmhCieqY', {
@@ -18,9 +18,19 @@ var markers = [];
 
 // Función para buscar ubicaciones
 function searchLocation() {
-    var query = document.getElementById('search-bar').value;
+    var query = document.getElementById('search-bar').value.trim();
+    var errorElement = document.getElementById('search-error'); // Asegúrate de tener este elemento en tu HTML
+
     if (query) {
+        // Limpiar mensaje de error si existe
+        if (errorElement) {
+            errorElement.classList.remove('search-error-visible', 'search-error-shake');
+        }
+
         var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+        // Mostrar loader (opcional)
+        toggleSearchLoading(true);
 
         fetch(url)
             .then(response => response.json())
@@ -30,28 +40,69 @@ function searchLocation() {
                     var lat = firstResult.lat;
                     var lon = firstResult.lon;
 
-                    // Centra el mapa en la nueva ubicación
                     map.setView([lat, lon], 13);
 
-                    // Limpia los marcadores existentes
-                    markers.forEach(marker => map.removeLayer(marker));
-                    markers = [];
+                    // Limpiar marcadores
+                    clearMarkers();
 
-                    // Agrega un nuevo marcador
-                    var newMarker = L.marker([lat, lon]).addTo(map);
-                    newMarker.bindPopup(`<b>${firstResult.display_name}</b>`).openPopup();
-                    markers.push(newMarker);
+                    // Agregar nuevo marcador
+                    addNewMarker(lat, lon, firstResult.display_name);
                 } else {
-                    alert('No se encontraron resultados.');
+                    showSearchMessage('🌍 No encontramos esa ciudad. Intenta con otro nombre', 'error');
                 }
-                hideSuggestions(); // Oculta sugerencias después de buscar
             })
             .catch(error => {
                 console.error('Error:', error);
+                showSearchMessage('⚠️ Error al conectar con el servidor', 'error');
+            })
+            .finally(() => {
+                toggleSearchLoading(false);
+                hideSuggestions();
             });
     } else {
-        alert('Por favor, ingresa un término de búsqueda.');
+        // Mostrar error en la interfaz
+        if (errorElement) {
+            errorElement.textContent = '🌍 Por favor, ingresa una ciudad';
+            errorElement.classList.add('search-error-visible', 'search-error-shake');
+            setTimeout(() => errorElement.classList.remove('search-error-shake'), 500);
+        }
+
+        // Opcional: Enfocar el input automáticamente
+        document.getElementById('search-bar').focus();
     }
+}
+
+// Funciones auxiliares (añádelas a tu código)
+function toggleSearchLoading(show) {
+    var icon = document.querySelector('.search-icon');
+    if (icon) {
+        icon.classList.toggle('fa-search', !show);
+        icon.classList.toggle('fa-spinner', show);
+        icon.classList.toggle('fa-spin', show);
+    }
+}
+
+function showSearchMessage(message, type) {
+    var errorElement = document.getElementById('search-error');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.className = type === 'error' ? 'search-error-visible' : '';
+        if (type === 'error') {
+            errorElement.classList.add('search-error-shake');
+            setTimeout(() => errorElement.classList.remove('search-error-shake'), 500);
+        }
+    }
+}
+
+function clearMarkers() {
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+}
+
+function addNewMarker(lat, lon, name) {
+    var newMarker = L.marker([lat, lon]).addTo(map);
+    newMarker.bindPopup(`<b>${name}</b>`).openPopup();
+    markers.push(newMarker);
 }
 
 // Función para mostrar sugerencias
