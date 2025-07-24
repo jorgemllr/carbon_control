@@ -616,9 +616,8 @@ def update_action_status():
             WHERE id = %s
         """, (new_status, action_id))
         
-        # 2. Si se aprueba, agregar créditos al usuario
+        # 2. Si se aprueba, agregar créditos al usuario (¡VALORES ACTUALIZADOS x5!)
         if new_status == 'approved':
-            # Primero obtenemos el user_id y determinamos los créditos
             cursor.execute("""
                 SELECT user_id, description 
                 FROM reported_actions 
@@ -626,13 +625,28 @@ def update_action_status():
             """, (action_id,))
             action = cursor.fetchone()
             
-            # Determinar créditos basados en la descripción (ajusta esta lógica según tus necesidades)
-            credits = 10  # Valor por defecto
+            # Asignar créditos multiplicados por 5 (coherente con el frontend)
+            credits = 50  # Valor por defecto (antes era 10)
             if "reciclaje" in action['description'].lower():
-                credits = 10
+                credits = 50  # PET, papel, separación residuos (antes 10)
+            elif "centro_acopio" in action['description'].lower():
+                credits = 75  # Centro acopio (antes 15)
             elif "limpieza" in action['description'].lower():
-                credits = 15
-            # Agrega más condiciones según tus categorías
+                credits = 75  # Recoger basura (antes 15)
+            elif "mesas" in action['description'].lower():
+                credits = 50  # Limpiar mesas (antes 10)
+            elif "plática" in action['description'].lower() or "taller" in action['description'].lower():
+                credits = 100  # Educación ecológica (antes 20)
+            elif "cartel" in action['description'].lower():
+                credits = 75  # Cartel ecológico (antes 15)
+            elif "infografía" in action['description'].lower():
+                credits = 100  # Infografía (antes 20)
+            elif "concurso" in action['description'].lower():
+                credits = 125  # Concurso (antes 25)
+            elif "contenedor" in action['description'].lower():
+                credits = 25  # Reporte contenedor (antes 5)
+            elif "riego" in action['description'].lower():
+                credits = 50  # Riego plantas (antes 10)
             
             # Actualizar créditos del usuario
             cursor.execute("""
